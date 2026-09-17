@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function () {
      enter the viewport
      ------------------------------------------ */
   const revealEls = document.querySelectorAll(
-    '.prog-card, .mission-card, .event-item, .donate-card, .g-cell'
+    '.prog-card, .mission-card, .day-card, .donate-card, .g-cell'
   );
 
   const observer = new IntersectionObserver(
@@ -119,5 +119,73 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     });
   });
+
+
+  /* ------------------------------------------
+     WORLD DAYS — next-observance countdown,
+     category filters, and expandable cards
+     ------------------------------------------ */
+  const dayCards = document.querySelectorAll('.day-card');
+
+  if (dayCards.length) {
+
+    /* -- Next Observance banner -- */
+    const nameEl = document.getElementById('nextUpName');
+    const dateEl = document.getElementById('nextUpDate');
+    const countdownEl = document.getElementById('nextUpCountdown');
+
+    if (nameEl && dateEl && countdownEl) {
+      const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      let soonest = null;
+
+      dayCards.forEach(function (card) {
+        const month = parseInt(card.dataset.month, 10) - 1;
+        const day = parseInt(card.dataset.day, 10);
+
+        let occurrence = new Date(today.getFullYear(), month, day);
+        if (occurrence < today) {
+          occurrence = new Date(today.getFullYear() + 1, month, day);
+        }
+
+        if (!soonest || occurrence < soonest.date) {
+          soonest = { date: occurrence, card: card };
+        }
+      });
+
+      if (soonest) {
+        const title = soonest.card.querySelector('h4');
+        const daysLeft = Math.round((soonest.date - today) / 86400000);
+
+        nameEl.textContent = title ? title.textContent : 'Upcoming World Day';
+        dateEl.textContent = MONTHS[soonest.date.getMonth()] + ' ' + soonest.date.getDate() + ', ' + soonest.date.getFullYear();
+        countdownEl.textContent = daysLeft === 0 ? "It's today!" : (daysLeft === 1 ? '1 day to go' : daysLeft + ' days to go');
+      }
+    }
+
+    /* -- Category filters -- */
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    filterBtns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        filterBtns.forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+
+        const filter = btn.dataset.filter;
+        dayCards.forEach(function (card) {
+          const matches = filter === 'all' || card.dataset.category === filter;
+          card.classList.toggle('hidden', !matches);
+        });
+      });
+    });
+
+    /* -- Expand / collapse each card's detail -- */
+    dayCards.forEach(function (card) {
+      card.addEventListener('click', function () {
+        card.classList.toggle('open');
+      });
+    });
+  }
 
 });

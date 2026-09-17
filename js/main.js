@@ -32,6 +32,37 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
   /* ------------------------------------------
+     MOBILE NAV — hamburger toggle
+     ------------------------------------------ */
+  const navToggle = document.getElementById('navToggle');
+  const navLinks = document.getElementById('navLinks');
+
+  if (navToggle && navLinks) {
+    navToggle.addEventListener('click', function () {
+      const isOpen = navLinks.classList.toggle('open');
+      navToggle.classList.toggle('active', isOpen);
+      navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+
+    navLinks.querySelectorAll('a').forEach(function (link) {
+      link.addEventListener('click', function () {
+        navLinks.classList.remove('open');
+        navToggle.classList.remove('active');
+        navToggle.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    window.addEventListener('resize', function () {
+      if (window.innerWidth > 860) {
+        navLinks.classList.remove('open');
+        navToggle.classList.remove('active');
+        navToggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
+
+
+  /* ------------------------------------------
      SCROLL REVEAL ANIMATION
      Adds .visible class to elements as they
      enter the viewport
@@ -68,41 +99,158 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
   /* ------------------------------------------
-     CONTACT FORM — basic submit handler
-     Replace the console.log with your own
-     form submission logic (e.g. EmailJS,
-     Formspree, or a backend endpoint)
+     CONTACT FORM — submits to Formspree (see
+     the form's action= in index.html) using
+     fetch() so the page never redirects and we
+     can show a status message in place.
      ------------------------------------------ */
   const form = document.querySelector('.contact-form');
   if (form) {
+    const statusEl = form.querySelector('#formStatus');
+    const btn = form.querySelector('.btn-send');
+
     form.addEventListener('submit', function (e) {
       e.preventDefault();
 
-      const name    = form.querySelector('input[placeholder="Your Name"]').value.trim();
-      const email   = form.querySelector('input[placeholder="Email Address"]').value.trim();
-      const subject = form.querySelector('input[placeholder="Subject"]').value.trim();
-      const message = form.querySelector('textarea').value.trim();
+      const name    = form.querySelector('[name="name"]').value.trim();
+      const email   = form.querySelector('[name="email"]').value.trim();
+      const message = form.querySelector('[name="message"]').value.trim();
 
       if (!name || !email || !message) {
-        alert('Please fill in all required fields.');
+        if (statusEl) {
+          statusEl.textContent = 'Please fill in all required fields.';
+          statusEl.className = 'form-status error';
+        }
         return;
       }
 
-      /* TODO: Replace this with your real form handler */
-      console.log('Form submitted:', { name, email, subject, message });
+      if (form.action.indexOf('YOUR_FORM_ID') !== -1) {
+        if (statusEl) {
+          statusEl.textContent = 'Form is not connected yet — add your Formspree form ID in index.html.';
+          statusEl.className = 'form-status error';
+        }
+        return;
+      }
 
-      const btn = form.querySelector('.btn-send');
-      btn.textContent = 'Message Sent ✓';
-      btn.style.background = '#3e6b1f';
+      btn.textContent = 'Sending…';
       btn.disabled = true;
 
-      setTimeout(function () {
-        btn.textContent = 'Send Message →';
-        btn.style.background = '';
-        btn.disabled = false;
-        form.reset();
-      }, 3000);
+      fetch(form.action, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { 'Accept': 'application/json' }
+      })
+        .then(function (response) {
+          if (response.ok) {
+            btn.textContent = 'Message Sent ✓';
+            if (statusEl) {
+              statusEl.textContent = "Thanks — we'll get back to you soon.";
+              statusEl.className = 'form-status success';
+            }
+            form.reset();
+          } else {
+            throw new Error('Submission failed');
+          }
+        })
+        .catch(function () {
+          btn.textContent = 'Send Message →';
+          btn.disabled = false;
+          if (statusEl) {
+            statusEl.textContent = 'Something went wrong — please try again or email us directly.';
+            statusEl.className = 'form-status error';
+          }
+        })
+        .finally(function () {
+          setTimeout(function () {
+            btn.textContent = 'Send Message →';
+            btn.disabled = false;
+          }, 3000);
+        });
     });
+  }
+
+
+  /* ------------------------------------------
+     TOPICS — renders cards from js/topics-data.js
+     (the file you edit to post something new)
+     ------------------------------------------ */
+  const topicsGrid = document.getElementById('topicsGrid');
+
+  if (topicsGrid) {
+    const topics = (typeof TOPICS !== 'undefined' ? TOPICS : []).slice();
+
+    topics.sort(function (a, b) {
+      return new Date(b.date) - new Date(a.date);
+    });
+
+    function escapeHtml(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+
+    /* Plain text -> HTML paragraphs. Blank lines separate
+       paragraphs; single line breaks within a paragraph
+       become <br>. */
+    function textToHtml(text) {
+      return String(text || '')
+        .split(/\n\s*\n/)
+        .map(function (block) {
+          return block.trim();
+        })
+        .filter(Boolean)
+        .map(function (block) {
+          return '<p>' + escapeHtml(block).replace(/\n/g, '<br>') + '</p>';
+        })
+        .join('');
+    }
+
+    if (!topics.length) {
+      topicsGrid.innerHTML = '<p class="topics-empty">No topics posted yet — check back soon.</p>';
+    } else {
+      topicsGrid.innerHTML = topics.map(function (topic) {
+        const dateLabel = new Date(topic.date + 'T00:00:00').toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric'
+        });
+
+        const downloadHtml = topic.file
+          ? '<a class="topic-download" href="' + topic.file + '" download>' +
+              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12m0 0-4-4m4 4 4-4M5 21h14"/></svg>' +
+              escapeHtml(topic.fileLabel || 'Download') +
+            '</a>'
+          : '';
+
+        const bodyHtml = topic.body
+          ? '<div class="topic-full">' + textToHtml(topic.body) + '</div>' +
+            '<button type="button" class="topic-toggle">Read Full Report</button>'
+          : '';
+
+        return (
+          '<div class="topic-card">' +
+            '<div class="topic-card-top">' +
+              (topic.category ? '<span class="topic-tag">' + escapeHtml(topic.category) + '</span>' : '<span></span>') +
+              '<span class="topic-date">' + dateLabel + '</span>' +
+            '</div>' +
+            '<h3>' + escapeHtml(topic.title) + '</h3>' +
+            (topic.summary ? '<p>' + escapeHtml(topic.summary) + '</p>' : '') +
+            bodyHtml +
+            downloadHtml +
+          '</div>'
+        );
+      }).join('');
+
+      /* Expand / collapse full report text */
+      topicsGrid.querySelectorAll('.topic-toggle').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          const card = btn.closest('.topic-card');
+          const isOpen = card.classList.toggle('open');
+          btn.textContent = isOpen ? 'Show Less' : 'Read Full Report';
+        });
+      });
+    }
   }
 
 
@@ -129,41 +277,126 @@ document.addEventListener('DOMContentLoaded', function () {
 
   if (dayCards.length) {
 
-    /* -- Next Observance banner -- */
+    /* -- Next Observance banner: live countdown -- */
     const nameEl = document.getElementById('nextUpName');
     const dateEl = document.getElementById('nextUpDate');
-    const countdownEl = document.getElementById('nextUpCountdown');
+    const cdMonths = document.getElementById('cdMonths');
+    const cdDays = document.getElementById('cdDays');
+    const cdHours = document.getElementById('cdHours');
+    const cdMinutes = document.getElementById('cdMinutes');
+    const cdSeconds = document.getElementById('cdSeconds');
 
-    if (nameEl && dateEl && countdownEl) {
-      const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
+    const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
+    function pad(n) {
+      return n < 10 ? '0' + n : '' + n;
+    }
+
+    /* Next calendar occurrence of a given card's day, rolling into
+       next year once that day has passed. */
+    function occurrenceFor(card, now) {
+      const month = parseInt(card.dataset.month, 10) - 1;
+      const day = parseInt(card.dataset.day, 10);
+      const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+      let occurrence = new Date(now.getFullYear(), month, day);
+      if (occurrence < startOfToday) {
+        occurrence = new Date(now.getFullYear() + 1, month, day);
+      }
+      return occurrence;
+    }
+
+    /* Finds the day-card whose next occurrence is soonest overall */
+    function findSoonest(now) {
       let soonest = null;
-
       dayCards.forEach(function (card) {
-        const month = parseInt(card.dataset.month, 10) - 1;
-        const day = parseInt(card.dataset.day, 10);
-
-        let occurrence = new Date(today.getFullYear(), month, day);
-        if (occurrence < today) {
-          occurrence = new Date(today.getFullYear() + 1, month, day);
-        }
-
+        const occurrence = occurrenceFor(card, now);
         if (!soonest || occurrence < soonest.date) {
           soonest = { date: occurrence, card: card };
         }
       });
-
-      if (soonest) {
-        const title = soonest.card.querySelector('h4');
-        const daysLeft = Math.round((soonest.date - today) / 86400000);
-
-        nameEl.textContent = title ? title.textContent : 'Upcoming World Day';
-        dateEl.textContent = MONTHS[soonest.date.getMonth()] + ' ' + soonest.date.getDate() + ', ' + soonest.date.getFullYear();
-        countdownEl.textContent = daysLeft === 0 ? "It's today!" : (daysLeft === 1 ? '1 day to go' : daysLeft + ' days to go');
-      }
+      return soonest;
     }
+
+    /* Calendar-accurate months + days remaining (handles different
+       month lengths correctly), then hours/min/sec from what's left. */
+    function breakdown(target, now) {
+      let months = (target.getFullYear() - now.getFullYear()) * 12 + (target.getMonth() - now.getMonth());
+      let anchor = new Date(now.getFullYear(), now.getMonth() + months, now.getDate(), now.getHours(), now.getMinutes(), now.getSeconds());
+
+      if (anchor > target) {
+        months--;
+        anchor = new Date(now.getFullYear(), now.getMonth() + months, now.getDate(), now.getHours(), now.getMinutes(), now.getSeconds());
+      }
+
+      let remainder = target - anchor;
+      if (remainder < 0) remainder = 0;
+      if (months < 0) months = 0;
+
+      const days = Math.floor(remainder / 86400000);
+      remainder -= days * 86400000;
+      const hours = Math.floor(remainder / 3600000);
+      remainder -= hours * 3600000;
+      const minutes = Math.floor(remainder / 60000);
+      remainder -= minutes * 60000;
+      const seconds = Math.floor(remainder / 1000);
+
+      return { months: months, days: days, hours: hours, minutes: minutes, seconds: seconds };
+    }
+
+    function writeBreakdown(els, b) {
+      if (els.months) els.months.textContent = b.months;
+      if (els.days) els.days.textContent = b.days;
+      if (els.hours) els.hours.textContent = pad(b.hours);
+      if (els.minutes) els.minutes.textContent = pad(b.minutes);
+      if (els.seconds) els.seconds.textContent = pad(b.seconds);
+    }
+
+    let cachedSoonest = null;
+    let lastLabel = null;
+
+    function tick() {
+      const now = new Date();
+
+      /* -- Next Observance banner -- */
+      if (nameEl && dateEl && cdMonths) {
+        if (!cachedSoonest || cachedSoonest.date <= now) {
+          cachedSoonest = findSoonest(now);
+        }
+
+        const title = cachedSoonest.card.querySelector('h4');
+        const label = title ? title.textContent : 'Upcoming World Day';
+
+        if (label !== lastLabel) {
+          nameEl.textContent = label;
+          dateEl.textContent = MONTHS[cachedSoonest.date.getMonth()] + ' ' + cachedSoonest.date.getDate() + ', ' + cachedSoonest.date.getFullYear();
+          lastLabel = label;
+        }
+
+        writeBreakdown(
+          { months: cdMonths, days: cdDays, hours: cdHours, minutes: cdMinutes, seconds: cdSeconds },
+          breakdown(cachedSoonest.date, now)
+        );
+      }
+
+      /* -- Per-card countdown, revealed when a card is expanded -- */
+      dayCards.forEach(function (card) {
+        const target = occurrenceFor(card, now);
+        writeBreakdown(
+          {
+            months: card.querySelector('.day-cd-months'),
+            days: card.querySelector('.day-cd-days'),
+            hours: card.querySelector('.day-cd-hours'),
+            minutes: card.querySelector('.day-cd-minutes'),
+            seconds: card.querySelector('.day-cd-seconds')
+          },
+          breakdown(target, now)
+        );
+      });
+    }
+
+    tick();
+    setInterval(tick, 1000);
 
     /* -- Category filters -- */
     const filterBtns = document.querySelectorAll('.filter-btn');

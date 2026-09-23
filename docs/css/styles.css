@@ -10,6 +10,12 @@
   box-sizing: border-box;
 }
 
+/* Class-level display rules (flex/grid) would otherwise override the
+   [hidden] attribute, leaving "hidden" elements visible. */
+[hidden] {
+  display: none !important;
+}
+
 :root {
   --green:        #3e6b1f;
   --green-light:  #5a8f2e;

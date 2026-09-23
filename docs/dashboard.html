@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Your enrolled Deegansan courses and materials." />
+  <title>My Courses – Deegansan</title>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Lato:wght@300;400;700&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <nav>
+    <a class="nav-logo" href="index.html#home">
+      <img src="images/logo.jpeg" alt="Deegansan Logo" />
+    </a>
+    <button type="button" class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="navLinks">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#programs">Thematic Areas</a></li>
+      <li><a href="index.html#events">World Days</a></li>
+      <li><a href="index.html#topics">Topics</a></li>
+      <li><a href="index.html#courses">Courses</a></li>
+      <li><a href="index.html#gallery">Gallery</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+      <li id="navAuthSlot"></li>
+    </ul>
+  </nav>
+
+  <main class="course-page">
+    <div class="course-page-inner">
+      <span class="section-tag">My Account</span>
+      <h1 id="dashboardGreeting">My Courses</h1>
+      <div class="divider"></div>
+
+      <div id="dashboardEnrollments" class="courses-grid" style="margin-top: 2rem;">
+        <p class="topics-empty">Loading your courses…</p>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-bottom">
+      <span>© 2025 Deegansan. All rights reserved.</span>
+      <span>Local Actions, Global Impact.</span>
+    </div>
+  </footer>
+
+  <script src="js/courses-data.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/dashboard.js"></script>
+
+</body>
+</html>

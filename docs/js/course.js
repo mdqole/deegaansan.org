@@ -78,54 +78,83 @@ document.addEventListener('DOMContentLoaded', function () {
     if (enrollPanelEl) enrollPanelEl.hidden = true;
   }
 
-  /* -- This page's own enrollment form -- */
+  /* -- Auth gate + this page's own enrollment form -- */
   const form = document.getElementById('courseEnrollForm');
-  if (form) {
+  const authPrompt = document.getElementById('courseAuthPrompt');
+  const enrollAsLine = document.getElementById('courseEnrollAsLine');
+  const loginLink = document.getElementById('courseLoginLink');
+  const signupLink = document.getElementById('courseSignupLink');
+  const nextParam = encodeURIComponent('course.html?course=' + slug);
+
+  if (loginLink) loginLink.href = 'login.html?next=' + nextParam;
+  if (signupLink) signupLink.href = 'signup.html?next=' + nextParam;
+
+  if (form && !enrolled) {
     const statusEl = document.getElementById('courseEnrollStatus');
     const btn = form.querySelector('.btn-send');
+    let currentUser = null;
+
+    function notifyFormspree() {
+      fetch('https://formspree.io/f/mljdeapa', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          name: currentUser.name,
+          email: currentUser.email,
+          course: course.title,
+          _subject: 'New Course Enrollment: ' + course.title
+        })
+      }).catch(function () {});
+    }
+
+    fetch('/api/auth/me', { credentials: 'include' })
+      .then(function (r) { return r.json(); })
+      .then(function (me) {
+        if (me.loggedIn) {
+          currentUser = me;
+          form.hidden = false;
+          if (authPrompt) authPrompt.hidden = true;
+          if (enrollAsLine) {
+            enrollAsLine.hidden = false;
+            enrollAsLine.textContent = 'Enrolling as ' + me.name + ' (' + me.email + ')';
+          }
+        } else {
+          form.hidden = true;
+          if (authPrompt) authPrompt.hidden = false;
+        }
+      });
 
     form.addEventListener('submit', function (e) {
       e.preventDefault();
 
-      const name = form.querySelector('[name="name"]').value.trim();
-      const email = form.querySelector('[name="email"]').value.trim();
-
-      if (!name || !email) {
-        if (statusEl) {
-          statusEl.textContent = 'Please fill in your name and email.';
-          statusEl.className = 'form-status error';
-        }
+      if (!currentUser) {
+        if (authPrompt) authPrompt.hidden = false;
         return;
       }
 
       btn.textContent = 'Submitting…';
       btn.disabled = true;
 
-      fetch(form.action, {
+      fetch('/api/enroll', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: name,
-          email: email,
           phone: form.querySelector('[name="phone"]').value.trim(),
           course: course.title,
-          message: form.querySelector('[name="message"]').value.trim(),
-          _subject: 'New Course Enrollment: ' + course.title,
-          _gotcha: form.querySelector('[name="_gotcha"]').value
+          courseSlug: course.slug,
+          message: form.querySelector('[name="message"]').value.trim()
         })
       })
         .then(function (response) {
-          if (response.ok) {
+          return response.json().then(function (data) {
+            if (!response.ok || !data.ok) {
+              throw new Error(data && data.error ? data.error : 'Submission failed');
+            }
+            notifyFormspree();
             if (enrolledNameEl) enrolledNameEl.textContent = course.title;
             if (bannerEl) bannerEl.hidden = false;
             if (enrollPanelEl) enrollPanelEl.hidden = true;
-            return;
-          }
-          return response.json().then(function (data) {
-            const detail = data && Array.isArray(data.errors) && data.errors.length
-              ? data.errors.map(function (er) { return er.message; }).join(', ')
-              : null;
-            throw new Error(detail || 'Submission failed');
           });
         })
         .catch(function (err) {

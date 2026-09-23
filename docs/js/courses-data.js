@@ -27,6 +27,11 @@
                 the course's own page. Leave as "" if there's
                 nothing more to add. Paragraphs are separated
                 by a blank line, same as topics-data.js.
+   materials  — array of { label, file } shown on a student's
+                "My Courses" dashboard once they've enrolled,
+                e.g. { label: "Week 1 Handout (PDF)", file:
+                "documents/my-handout.pdf" }. Leave as [] if
+                there's nothing to attach yet.
    ============================================ */
 
 const COURSES = [
@@ -48,7 +53,8 @@ const COURSES = [
 
 You'll start by learning how to read a degraded landscape: identifying the drivers of degradation, prioritizing which areas to restore first, and setting realistic recovery targets with the community that depends on the land.
 
-From there, the course moves into hands-on technique — reseeding methods suited to arid and semi-arid conditions, and rotational grazing plans that let vegetation recover while still supporting livestock. Each module ties back to monitoring, so you leave with a simple way to track whether a restoration effort is actually working.`
+From there, the course moves into hands-on technique — reseeding methods suited to arid and semi-arid conditions, and rotational grazing plans that let vegetation recover while still supporting livestock. Each module ties back to monitoring, so you leave with a simple way to track whether a restoration effort is actually working.`,
+    materials: []
   },
 
   {
@@ -68,7 +74,8 @@ From there, the course moves into hands-on technique — reseeding methods suite
 
 Sessions move from diagnosis (where is erosion or water loss actually happening, and why) to construction (the water harvesting structures and erosion-control measures that address it), and finish on maintenance — because a structure a community can't maintain doesn't last.
 
-Throughout, the course draws on real case studies from Deegansan's Bay Region conservation work, including what held up through flooding seasons and what had to be redesigned.`
+Throughout, the course draws on real case studies from Deegansan's Bay Region conservation work, including what held up through flooding seasons and what had to be redesigned.`,
+    materials: []
   },
 
   {
@@ -88,7 +95,8 @@ Throughout, the course draws on real case studies from Deegansan's Bay Region co
 
 You'll learn how to read seasonal forecasts from regional climate bodies and turn them into plain-language warnings communities can actually act on — including how to design an early-warning and evacuation plan that fits a specific settlement or watershed.
 
-The final part of the course connects that preparedness work to longer-term climate advocacy, and gives you a facilitation framework for running community dialogues that turn global climate commitments into decisions people make on the ground.`
+The final part of the course connects that preparedness work to longer-term climate advocacy, and gives you a facilitation framework for running community dialogues that turn global climate commitments into decisions people make on the ground.`,
+    materials: []
   }
 
 ];

@@ -37,6 +37,7 @@
       <li><a href="#gallery">Gallery</a></li>
       <li><a href="#contact">Contact</a></li>
       <li><a href="#donate" class="nav-donate">Donate</a></li>
+      <li id="navAuthSlot"></li>
     </ul>
   </nav>
 
@@ -535,14 +536,20 @@
 
     <div class="enroll-panel" id="enroll">
       <div class="enroll-panel-head">
-        <h3>Enroll Your Interest</h3>
-        <p>Tell us which course you'd like to take — we'll follow up with dates, cost, and how to get started.</p>
+        <h3>Enroll in a Course</h3>
+        <p>Log in or create a free account, then choose which course you'd like to take — it'll show up on your own "My Courses" page.</p>
       </div>
-      <form class="enroll-form" id="enrollForm" action="https://formspree.io/f/mljdeapa" method="POST">
-        <div class="form-row">
-          <input type="text" name="name" placeholder="Your Name" required />
-          <input type="email" name="email" placeholder="Email Address" required />
+
+      <div class="auth-prompt" id="enrollAuthPrompt" hidden>
+        <p>You'll need an account to enroll.</p>
+        <div class="auth-prompt-btns">
+          <a href="login.html?next=%23courses" class="course-enroll-btn">Log In</a>
+          <a href="signup.html?next=%23courses" class="btn-send" style="text-decoration:none;">Sign Up Free →</a>
         </div>
+      </div>
+
+      <form class="enroll-form" id="enrollForm">
+        <p class="enroll-as" id="enrollAsLine" hidden></p>
         <div class="form-row">
           <input type="text" name="phone" placeholder="Phone (optional)" />
           <select name="course" id="enrollCourse" required>
@@ -550,7 +557,6 @@
           </select>
         </div>
         <textarea name="message" placeholder="Anything else we should know? (optional)"></textarea>
-        <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off" />
         <button class="btn-send" type="submit">Submit Enrollment →</button>
         <p class="form-status" id="enrollStatus"></p>
       </form>
@@ -803,6 +809,7 @@
   <script src="js/topics-data.js"></script>
   <script src="js/courses-data.js"></script>
   <script src="js/main.js"></script>
+  <script src="js/auth.js"></script>
 
 </body>
 </html>

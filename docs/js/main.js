@@ -334,21 +334,60 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   const enrollForm = document.getElementById('enrollForm');
+  const enrollAuthPrompt = document.getElementById('enrollAuthPrompt');
+  const enrollAsLine = document.getElementById('enrollAsLine');
+
   if (enrollForm) {
     const enrollStatusEl = document.getElementById('enrollStatus');
     const enrollBtn = enrollForm.querySelector('.btn-send');
+    let currentUser = null;
+
+    function notifyFormspree(course) {
+      // Best-effort org notification alongside the real enrollment record —
+      // failures here are ignored, the enrollment itself already succeeded.
+      fetch('https://formspree.io/f/mljdeapa', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          name: currentUser.name,
+          email: currentUser.email,
+          course: course,
+          _subject: 'New Course Enrollment: ' + course
+        })
+      }).catch(function () {});
+    }
+
+    fetch('/api/auth/me', { credentials: 'include' })
+      .then(function (r) { return r.json(); })
+      .then(function (me) {
+        if (me.loggedIn) {
+          currentUser = me;
+          enrollForm.hidden = false;
+          if (enrollAuthPrompt) enrollAuthPrompt.hidden = true;
+          if (enrollAsLine) {
+            enrollAsLine.hidden = false;
+            enrollAsLine.textContent = 'Enrolling as ' + me.name + ' (' + me.email + ')';
+          }
+        } else {
+          enrollForm.hidden = true;
+          if (enrollAuthPrompt) enrollAuthPrompt.hidden = false;
+        }
+      });
 
     enrollForm.addEventListener('submit', function (e) {
       e.preventDefault();
 
-      const name = enrollForm.querySelector('[name="name"]').value.trim();
-      const email = enrollForm.querySelector('[name="email"]').value.trim();
+      if (!currentUser) {
+        if (enrollAuthPrompt) enrollAuthPrompt.hidden = false;
+        return;
+      }
+
       const slug = enrollForm.querySelector('[name="course"]').value.trim();
       const matchedCourse = allCourses.filter(function (c) { return c.slug === slug; })[0];
 
-      if (!name || !email || !slug) {
+      if (!slug) {
         if (enrollStatusEl) {
-          enrollStatusEl.textContent = 'Please fill in your name, email, and course.';
+          enrollStatusEl.textContent = 'Please choose a course.';
           enrollStatusEl.className = 'form-status error';
         }
         return;
@@ -357,38 +396,33 @@ document.addEventListener('DOMContentLoaded', function () {
       enrollBtn.textContent = 'Submitting…';
       enrollBtn.disabled = true;
 
-      fetch(enrollForm.action, {
+      fetch('/api/enroll', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: name,
-          email: email,
           phone: enrollForm.querySelector('[name="phone"]').value.trim(),
           course: matchedCourse ? matchedCourse.title : slug,
-          message: enrollForm.querySelector('[name="message"]').value.trim(),
-          _subject: 'New Course Enrollment: ' + (matchedCourse ? matchedCourse.title : slug),
-          _gotcha: enrollForm.querySelector('[name="_gotcha"]').value
+          courseSlug: slug,
+          message: enrollForm.querySelector('[name="message"]').value.trim()
         })
       })
         .then(function (response) {
-          if (response.ok) {
+          return response.json().then(function (data) {
+            if (!response.ok || !data.ok) {
+              throw new Error(data && data.error ? data.error : 'Submission failed');
+            }
+            notifyFormspree(matchedCourse ? matchedCourse.title : slug);
             if (matchedCourse) {
               window.location.href = 'course.html?course=' + encodeURIComponent(matchedCourse.slug) + '&enrolled=1';
               return;
             }
             enrollBtn.textContent = 'Enrolled ✓';
             if (enrollStatusEl) {
-              enrollStatusEl.textContent = "Thanks — we'll be in touch about next steps.";
+              enrollStatusEl.textContent = "Thanks — check your dashboard for next steps.";
               enrollStatusEl.className = 'form-status success';
             }
             enrollForm.reset();
-            return;
-          }
-          return response.json().then(function (data) {
-            const detail = data && Array.isArray(data.errors) && data.errors.length
-              ? data.errors.map(function (er) { return er.message; }).join(', ')
-              : null;
-            throw new Error(detail || 'Submission failed');
           });
         })
         .catch(function (err) {

@@ -101,26 +101,31 @@ document.addEventListener('DOMContentLoaded', function () {
       btn.textContent = 'Submitting…';
       btn.disabled = true;
 
-      fetch('/api/enroll', {
+      fetch(form.action, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify({
           name: name,
           email: email,
           phone: form.querySelector('[name="phone"]').value.trim(),
           course: course.title,
           message: form.querySelector('[name="message"]').value.trim(),
+          _subject: 'New Course Enrollment: ' + course.title,
           _gotcha: form.querySelector('[name="_gotcha"]').value
         })
       })
         .then(function (response) {
-          return response.json().then(function (data) {
-            if (!response.ok || !data.ok) {
-              throw new Error(data && data.error ? data.error : 'Submission failed');
-            }
+          if (response.ok) {
             if (enrolledNameEl) enrolledNameEl.textContent = course.title;
             if (bannerEl) bannerEl.hidden = false;
             if (enrollPanelEl) enrollPanelEl.hidden = true;
+            return;
+          }
+          return response.json().then(function (data) {
+            const detail = data && Array.isArray(data.errors) && data.errors.length
+              ? data.errors.map(function (er) { return er.message; }).join(', ')
+              : null;
+            throw new Error(detail || 'Submission failed');
           });
         })
         .catch(function (err) {

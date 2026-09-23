@@ -357,23 +357,21 @@ document.addEventListener('DOMContentLoaded', function () {
       enrollBtn.textContent = 'Submitting…';
       enrollBtn.disabled = true;
 
-      fetch('/api/enroll', {
+      fetch(enrollForm.action, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify({
           name: name,
           email: email,
           phone: enrollForm.querySelector('[name="phone"]').value.trim(),
           course: matchedCourse ? matchedCourse.title : slug,
           message: enrollForm.querySelector('[name="message"]').value.trim(),
+          _subject: 'New Course Enrollment: ' + (matchedCourse ? matchedCourse.title : slug),
           _gotcha: enrollForm.querySelector('[name="_gotcha"]').value
         })
       })
         .then(function (response) {
-          return response.json().then(function (data) {
-            if (!response.ok || !data.ok) {
-              throw new Error(data && data.error ? data.error : 'Submission failed');
-            }
+          if (response.ok) {
             if (matchedCourse) {
               window.location.href = 'course.html?course=' + encodeURIComponent(matchedCourse.slug) + '&enrolled=1';
               return;
@@ -384,6 +382,13 @@ document.addEventListener('DOMContentLoaded', function () {
               enrollStatusEl.className = 'form-status success';
             }
             enrollForm.reset();
+            return;
+          }
+          return response.json().then(function (data) {
+            const detail = data && Array.isArray(data.errors) && data.errors.length
+              ? data.errors.map(function (er) { return er.message; }).join(', ')
+              : null;
+            throw new Error(detail || 'Submission failed');
           });
         })
         .catch(function (err) {

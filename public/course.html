@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Online courses from Deegansan — practical training in rangeland restoration, soil & water conservation, and community-based climate adaptation." />
+  <title>Course – Deegansan</title>
+
+  <!-- Google Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Lato:wght@300;400;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <!-- ==========================================
+       NAVIGATION (same as index.html — links point
+       back to the main page's sections)
+  =========================================== -->
+  <nav>
+    <a class="nav-logo" href="index.html#home">
+      <img src="images/logo.jpeg" alt="Deegansan Logo" />
+    </a>
+    <button type="button" class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="navLinks">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#programs">Thematic Areas</a></li>
+      <li><a href="index.html#events">World Days</a></li>
+      <li><a href="index.html#topics">Topics</a></li>
+      <li><a href="index.html#courses">Courses</a></li>
+      <li><a href="index.html#gallery">Gallery</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+      <li><a href="index.html#donate" class="nav-donate">Donate</a></li>
+    </ul>
+  </nav>
+
+
+  <!-- ==========================================
+       COURSE PAGE — filled in by js/course.js
+       based on the ?course=<slug> query string,
+       matched against js/courses-data.js
+  =========================================== -->
+  <main class="course-page">
+
+    <div class="course-page-inner">
+      <a class="back-link" href="index.html#courses">← Back to Courses</a>
+
+      <div class="enrolled-banner" id="courseEnrolledBanner" hidden>
+        You're enrolled in <strong id="enrolledCourseName"></strong> — we'll be in touch about dates, cost, and how to get started.
+      </div>
+
+      <div id="courseNotFound" class="course-not-found" hidden>
+        <h2>Course Not Found</h2>
+        <p>We couldn't find that course. It may have been renamed or removed.</p>
+        <a class="btn-donate-big" href="index.html#courses">View All Courses →</a>
+      </div>
+
+      <article id="courseArticle" hidden>
+        <div class="course-page-top">
+          <span class="course-tag" id="courseCategory"></span>
+          <span class="course-meta" id="courseMeta"></span>
+        </div>
+        <h1 id="courseTitle"></h1>
+        <p class="course-page-summary" id="courseSummary"></p>
+
+        <div class="course-page-body">
+          <div class="course-page-main">
+            <h3>What You'll Learn</h3>
+            <ul class="course-highlights" id="courseHighlights"></ul>
+
+            <div id="courseContent" class="course-page-content"></div>
+          </div>
+
+          <div class="course-page-side">
+            <div class="enroll-panel course-page-enroll" id="courseEnrollPanel">
+              <div class="enroll-panel-head">
+                <h3>Enroll in This Course</h3>
+                <p>Tell us a bit about yourself — we'll follow up with dates, cost, and how to get started.</p>
+              </div>
+              <form class="enroll-form" id="courseEnrollForm">
+                <input type="text" name="name" placeholder="Your Name" required />
+                <input type="email" name="email" placeholder="Email Address" required />
+                <input type="text" name="phone" placeholder="Phone (optional)" />
+                <textarea name="message" placeholder="Anything else we should know? (optional)"></textarea>
+                <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off" />
+                <button class="btn-send" type="submit">Submit Enrollment →</button>
+                <p class="form-status" id="courseEnrollStatus"></p>
+              </form>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+
+  </main>
+
+
+  <!-- ==========================================
+       FOOTER (same as index.html)
+  =========================================== -->
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-logo">
+          DEEGAAN<span style="color: var(--brown-mid);">SAN</span>
+        </div>
+        <p>
+          Environment &amp; ecosystem advocate. Working to restore ecosystems,
+          empower communities, and advance environmental justice across the
+          Horn of Africa and beyond.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>Thematic Areas</h4>
+        <a href="index.html#programs">Rangeland Restoration</a>
+        <a href="index.html#programs">Soil &amp; Water Conservation</a>
+        <a href="index.html#programs">Awareness Raising</a>
+        <a href="index.html#programs">Climate Advocacy</a>
+      </div>
+      <div class="footer-col">
+        <h4>World Days</h4>
+        <a href="index.html#events">World Water Day</a>
+        <a href="index.html#events">Earth Day</a>
+        <a href="index.html#events">World Environment Day</a>
+        <a href="index.html#events">World Soil Day</a>
+      </div>
+      <div class="footer-col">
+        <h4>Organization</h4>
+        <a href="index.html#about">About Us</a>
+        <a href="index.html#topics">Reports &amp; Updates</a>
+        <a href="index.html#courses">Online Courses</a>
+        <a href="index.html#donate">Donate</a>
+        <a href="index.html#contact">Contact</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 Deegansan. All rights reserved.</span>
+      <span>Local Actions, Global Impact.</span>
+    </div>
+  </footer>
+
+
+  <!-- JavaScript -->
+  <script src="js/courses-data.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/course.js"></script>
+
+</body>
+</html>

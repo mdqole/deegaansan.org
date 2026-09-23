@@ -33,6 +33,7 @@
       <li><a href="#programs">Thematic Areas</a></li>
       <li><a href="#events">World Days</a></li>
       <li><a href="#topics">Topics</a></li>
+      <li><a href="#courses">Courses</a></li>
       <li><a href="#gallery">Gallery</a></li>
       <li><a href="#contact">Contact</a></li>
       <li><a href="#donate" class="nav-donate">Donate</a></li>
@@ -504,6 +505,60 @@
 
 
   <!-- ==========================================
+       ONLINE COURSES
+       HOW TO POST A NEW COURSE:
+       1. Open js/courses-data.js
+       2. Copy one of the {...} entries in the COURSES
+          list, paste it as a new one, and fill in your
+          own title/category/format/duration/summary
+       3. Save — no HTML editing needed, this page
+          renders the list automatically
+
+       The enrollment form below posts to /api/enroll
+       (see server.js / routes/enroll.js) — submissions
+       are stored in MongoDB, not emailed via Formspree.
+  =========================================== -->
+  <section class="courses" id="courses">
+    <div class="section-header">
+      <span class="section-tag">Online Courses</span>
+      <h2>Learn With Deegansan</h2>
+      <div class="divider"></div>
+      <p class="section-lead">
+        Practical courses built on our field experience in rangeland
+        restoration, soil &amp; water conservation, and community-based
+        climate adaptation.
+      </p>
+    </div>
+    <div class="courses-grid" id="coursesGrid">
+      <!-- Rendered automatically by js/main.js from js/courses-data.js -->
+    </div>
+
+    <div class="enroll-panel" id="enroll">
+      <div class="enroll-panel-head">
+        <h3>Enroll Your Interest</h3>
+        <p>Tell us which course you'd like to take — we'll follow up with dates, cost, and how to get started.</p>
+      </div>
+      <form class="enroll-form" id="enrollForm">
+        <div class="form-row">
+          <input type="text" name="name" placeholder="Your Name" required />
+          <input type="email" name="email" placeholder="Email Address" required />
+        </div>
+        <div class="form-row">
+          <input type="text" name="phone" placeholder="Phone (optional)" />
+          <select name="course" id="enrollCourse" required>
+            <option value="" disabled selected>Select a course…</option>
+          </select>
+        </div>
+        <textarea name="message" placeholder="Anything else we should know? (optional)"></textarea>
+        <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off" />
+        <button class="btn-send" type="submit">Submit Enrollment →</button>
+        <p class="form-status" id="enrollStatus"></p>
+      </form>
+    </div>
+  </section>
+
+
+  <!-- ==========================================
        GALLERY
        HOW TO ADD YOUR PHOTOS:
        1. Put your images in the images/ folder
@@ -732,6 +787,7 @@
         <h4>Organization</h4>
         <a href="#about">About Us</a>
         <a href="#topics">Reports &amp; Updates</a>
+        <a href="#courses">Online Courses</a>
         <a href="#donate">Donate</a>
         <a href="#contact">Contact</a>
       </div>
@@ -745,6 +801,7 @@
 
   <!-- JavaScript -->
   <script src="js/topics-data.js"></script>
+  <script src="js/courses-data.js"></script>
   <script src="js/main.js"></script>
 
 </body>

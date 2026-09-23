@@ -255,6 +255,156 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
   /* ------------------------------------------
+     COURSES — renders cards from js/courses-data.js
+     and wires up the enrollment form's course
+     dropdown + submission to POST /api/enroll
+     ------------------------------------------ */
+  const coursesGrid = document.getElementById('coursesGrid');
+  const enrollCourseSelect = document.getElementById('enrollCourse');
+
+  if (coursesGrid) {
+    const courses = (typeof COURSES !== 'undefined' ? COURSES : []).slice();
+
+    function escapeHtmlCourse(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+
+    if (!courses.length) {
+      coursesGrid.innerHTML = '<p class="topics-empty">No courses posted yet — check back soon.</p>';
+    } else {
+      coursesGrid.innerHTML = courses.map(function (course) {
+        const highlightsHtml = (course.highlights && course.highlights.length)
+          ? '<ul class="course-highlights">' +
+              course.highlights.map(function (h) { return '<li>' + escapeHtmlCourse(h) + '</li>'; }).join('') +
+            '</ul>'
+          : '';
+
+        return (
+          '<div class="course-card">' +
+            '<div class="course-card-top">' +
+              (course.category ? '<span class="course-tag">' + escapeHtmlCourse(course.category) + '</span>' : '<span></span>') +
+              '<span class="course-meta">' + escapeHtmlCourse(course.format) + (course.duration ? ' · ' + escapeHtmlCourse(course.duration) : '') + '</span>' +
+            '</div>' +
+            '<h3>' + escapeHtmlCourse(course.title) + '</h3>' +
+            (course.summary ? '<p>' + escapeHtmlCourse(course.summary) + '</p>' : '') +
+            '<div class="course-full">' + highlightsHtml + '</div>' +
+            '<div class="course-card-actions">' +
+              '<button type="button" class="topic-toggle course-toggle">View Details</button>' +
+              '<a class="course-view-link" href="course.html?course=' + encodeURIComponent(course.slug) + '">View Full Course →</a>' +
+            '</div>' +
+            '<button type="button" class="course-enroll-btn" data-slug="' + escapeHtmlCourse(course.slug) + '">Enroll in This Course</button>' +
+          '</div>'
+        );
+      }).join('');
+
+      coursesGrid.querySelectorAll('.course-toggle').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          const card = btn.closest('.course-card');
+          const isOpen = card.classList.toggle('open');
+          btn.textContent = isOpen ? 'Show Less' : 'View Details';
+        });
+      });
+
+      coursesGrid.querySelectorAll('.course-enroll-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          if (enrollCourseSelect) {
+            enrollCourseSelect.value = btn.dataset.slug;
+          }
+          const enrollSection = document.getElementById('enroll');
+          if (enrollSection) {
+            enrollSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        });
+      });
+    }
+  }
+
+  const allCourses = (typeof COURSES !== 'undefined' ? COURSES : []);
+
+  if (enrollCourseSelect) {
+    allCourses.forEach(function (course) {
+      const opt = document.createElement('option');
+      opt.value = course.slug;
+      opt.textContent = course.title;
+      enrollCourseSelect.appendChild(opt);
+    });
+  }
+
+  const enrollForm = document.getElementById('enrollForm');
+  if (enrollForm) {
+    const enrollStatusEl = document.getElementById('enrollStatus');
+    const enrollBtn = enrollForm.querySelector('.btn-send');
+
+    enrollForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const name = enrollForm.querySelector('[name="name"]').value.trim();
+      const email = enrollForm.querySelector('[name="email"]').value.trim();
+      const slug = enrollForm.querySelector('[name="course"]').value.trim();
+      const matchedCourse = allCourses.filter(function (c) { return c.slug === slug; })[0];
+
+      if (!name || !email || !slug) {
+        if (enrollStatusEl) {
+          enrollStatusEl.textContent = 'Please fill in your name, email, and course.';
+          enrollStatusEl.className = 'form-status error';
+        }
+        return;
+      }
+
+      enrollBtn.textContent = 'Submitting…';
+      enrollBtn.disabled = true;
+
+      fetch('/api/enroll', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: name,
+          email: email,
+          phone: enrollForm.querySelector('[name="phone"]').value.trim(),
+          course: matchedCourse ? matchedCourse.title : slug,
+          message: enrollForm.querySelector('[name="message"]').value.trim(),
+          _gotcha: enrollForm.querySelector('[name="_gotcha"]').value
+        })
+      })
+        .then(function (response) {
+          return response.json().then(function (data) {
+            if (!response.ok || !data.ok) {
+              throw new Error(data && data.error ? data.error : 'Submission failed');
+            }
+            if (matchedCourse) {
+              window.location.href = 'course.html?course=' + encodeURIComponent(matchedCourse.slug) + '&enrolled=1';
+              return;
+            }
+            enrollBtn.textContent = 'Enrolled ✓';
+            if (enrollStatusEl) {
+              enrollStatusEl.textContent = "Thanks — we'll be in touch about next steps.";
+              enrollStatusEl.className = 'form-status success';
+            }
+            enrollForm.reset();
+          });
+        })
+        .catch(function (err) {
+          enrollBtn.textContent = 'Submit Enrollment →';
+          enrollBtn.disabled = false;
+          if (enrollStatusEl) {
+            enrollStatusEl.textContent = err.message || 'Something went wrong — please try again or email us directly.';
+            enrollStatusEl.className = 'form-status error';
+          }
+        })
+        .finally(function () {
+          setTimeout(function () {
+            enrollBtn.textContent = 'Submit Enrollment →';
+            enrollBtn.disabled = false;
+          }, 3000);
+        });
+    });
+  }
+
+
+  /* ------------------------------------------
      GALLERY — placeholder click handler
      Replace with a lightbox if desired
      ------------------------------------------ */

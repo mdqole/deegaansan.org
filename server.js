@@ -8,7 +8,10 @@ const enrollRouter = require('./routes/enroll');
 const app = express();
 
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+// Static assets live in docs/ (not public/) so GitHub Pages can serve this
+// same folder as a fallback — its branch source dropdown only offers
+// "/(root)" or "/docs". See README.md for the Render cutover.
+app.use(express.static(path.join(__dirname, 'docs')));
 
 app.get('/api/health', (req, res) => res.json({ ok: true }));
 app.use('/api', enrollRouter);

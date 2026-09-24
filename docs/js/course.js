@@ -151,7 +151,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!response.ok || !data.ok) {
               throw new Error(data && data.error ? data.error : 'Submission failed');
             }
-            notifyFormspree();
+            if (!data.alreadyEnrolled) notifyFormspree();
             if (enrolledNameEl) enrolledNameEl.textContent = course.title;
             if (bannerEl) bannerEl.hidden = false;
             if (enrollPanelEl) enrollPanelEl.hidden = true;

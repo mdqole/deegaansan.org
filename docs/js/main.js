@@ -412,7 +412,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!response.ok || !data.ok) {
               throw new Error(data && data.error ? data.error : 'Submission failed');
             }
-            notifyFormspree(matchedCourse ? matchedCourse.title : slug);
+            if (!data.alreadyEnrolled) notifyFormspree(matchedCourse ? matchedCourse.title : slug);
             if (matchedCourse) {
               window.location.href = 'course.html?course=' + encodeURIComponent(matchedCourse.slug) + '&enrolled=1';
               return;

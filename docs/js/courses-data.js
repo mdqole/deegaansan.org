@@ -15,6 +15,9 @@
    slug       — short id used in the course's URL
                 (course.html?course=<slug>). Letters,
                 numbers and hyphens only, must be unique.
+   image      — thumbnail shown on the course browser cards,
+                e.g. "images/my-course.jpg" (put the file in
+                the images/ folder).
    category   — short tag shown on the card, e.g.
                 "Restoration", "Climate", "Community"
    format     — e.g. "Self-paced", "Live cohort"
@@ -39,6 +42,7 @@ const COURSES = [
   {
     title: "Rangeland Restoration Fundamentals",
     slug: "rangeland-restoration-fundamentals",
+    image: "images/SWC.jpeg",
     category: "Restoration",
     format: "Self-paced",
     duration: "4 weeks",
@@ -60,6 +64,7 @@ From there, the course moves into hands-on technique — reseeding methods suite
   {
     title: "Soil & Water Conservation Techniques",
     slug: "soil-water-conservation-techniques",
+    image: "images/Gallery-3.jpg",
     category: "Conservation",
     format: "Live cohort",
     duration: "6 sessions",
@@ -81,6 +86,7 @@ Throughout, the course draws on real case studies from Deegansan's Bay Region co
   {
     title: "Community-Based Climate Adaptation",
     slug: "community-based-climate-adaptation",
+    image: "images/gallery-5.jpg",
     category: "Climate",
     format: "Self-paced",
     duration: "3 weeks",

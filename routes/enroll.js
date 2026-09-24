@@ -29,6 +29,11 @@ router.post('/enroll', requireAuth, async (req, res) => {
       return res.status(401).json({ ok: false, error: 'Please log in to continue.' });
     }
 
+    const existing = await Enrollment.findOne({ userId: user._id, courseSlug });
+    if (existing) {
+      return res.json({ ok: true, alreadyEnrolled: true });
+    }
+
     await Enrollment.create({
       userId: user._id,
       name: user.name,

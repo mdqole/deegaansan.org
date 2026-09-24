@@ -182,6 +182,12 @@ Healthy landscapes capture rainfall. Healthy soils absorb water. Healthy vegetat
             title: "Assignment 1 – Spot Degradation",
             brief: "Photograph three signs of degradation in your area (erosion, bare soil, a gully, degraded vegetation) and explain the probable causes."
           }
+        ],
+        materials: [
+          {
+            label: "Week 1 Slides — Foundations: Ecosystems, Restoration and Water (PowerPoint)",
+            file: "documents/week-1-foundations-slides.pptx"
+          }
         ]
       },
       {

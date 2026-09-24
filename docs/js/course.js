@@ -25,6 +25,72 @@ document.addEventListener('DOMContentLoaded', function () {
       .join('');
   }
 
+  function list(items, cls) {
+    return '<ul class="' + cls + '">' +
+      items.map(function (i) { return '<li>' + escapeHtml(i) + '</li>'; }).join('') +
+    '</ul>';
+  }
+
+  // Optional sections for full courses — each only renders if the course
+  // defines the matching field (see courses-data.js).
+  function buildExtras(c) {
+    let html = '';
+
+    if (c.audience && c.audience.length) {
+      html += '<section class="course-section"><h3>Who It\'s For</h3>' + list(c.audience, 'pill-list') + '</section>';
+    }
+
+    if (c.delivery && c.delivery.length) {
+      html += '<section class="course-section"><h3>How the Course Runs</h3>' + list(c.delivery, 'course-highlights') + '</section>';
+    }
+
+    if (c.outcomes && c.outcomes.length) {
+      html += '<section class="course-section"><h3>Learning Outcomes</h3>' +
+        '<p>By the end of the course, participants should be able to:</p>' + list(c.outcomes, 'course-highlights') + '</section>';
+    }
+
+    if (c.weeks && c.weeks.length) {
+      html += '<section class="course-section"><h3>Syllabus</h3>' + c.weeks.map(function (w, i) {
+        const modules = (w.modules || []).map(function (m) {
+          return '<div class="syllabus-module"><h4>Module ' + m.n + ' — ' + escapeHtml(m.title) + '</h4>' + list(m.topics || [], 'syllabus-topics') + '</div>';
+        }).join('');
+        const assignments = (w.assignments || []).map(function (a) {
+          return '<div class="syllabus-assign"><strong>' + escapeHtml(a.title) + '</strong><span>' + escapeHtml(a.brief) + '</span></div>';
+        }).join('');
+        return '<details class="syllabus-week"' + (i === 0 ? ' open' : '') + '>' +
+          '<summary><span class="syllabus-week-num">Week ' + w.week + '</span>' + escapeHtml(w.title) + '</summary>' +
+          '<div class="syllabus-week-body">' + modules + assignments + '</div>' +
+        '</details>';
+      }).join('') + '</section>';
+    }
+
+    if (c.assessment && c.assessment.length) {
+      html += '<section class="course-section"><h3>Assessment</h3><table class="assess-table"><tbody>' +
+        c.assessment.map(function (a) {
+          return '<tr><td>' + escapeHtml(a.label) + '</td><td>' + a.weight + '%</td></tr>';
+        }).join('') +
+        '</tbody></table>' +
+        (c.passMark ? '<p>Recommended passing score: <strong>' + c.passMark + '%</strong>.</p>' : '') +
+        (c.certificate ? '<p>' + escapeHtml(c.certificate) + '</p>' : '') +
+      '</section>';
+    }
+
+    if (c.finalProject && c.finalProject.sections) {
+      html += '<section class="course-section"><h3>Final Project</h3>' +
+        '<p><strong>' + escapeHtml(c.finalProject.title) + '</strong></p>' +
+        (c.finalProject.intro ? '<p>' + escapeHtml(c.finalProject.intro) + '</p>' : '') +
+        '<ol class="course-highlights numbered">' +
+          c.finalProject.sections.map(function (s) { return '<li>' + escapeHtml(s) + '</li>'; }).join('') +
+        '</ol></section>';
+    }
+
+    if (c.tools && c.tools.length) {
+      html += '<section class="course-section"><h3>Tools &amp; Platforms</h3>' + list(c.tools, 'course-highlights') + '</section>';
+    }
+
+    return html;
+  }
+
   const params = new URLSearchParams(window.location.search);
   const slug = params.get('course');
   const enrolled = params.get('enrolled') === '1';
@@ -72,10 +138,56 @@ document.addEventListener('DOMContentLoaded', function () {
   const enrolledNameEl = document.getElementById('enrolledCourseName');
   const enrollPanelEl = document.getElementById('courseEnrollPanel');
 
-  if (enrolled) {
+  const roomLinkEl = document.getElementById('courseRoomLink');
+
+  function showEnrolled() {
     if (enrolledNameEl) enrolledNameEl.textContent = course.title;
     if (bannerEl) bannerEl.hidden = false;
     if (enrollPanelEl) enrollPanelEl.hidden = true;
+    if (roomLinkEl && course.weeks && course.weeks.length) {
+      roomLinkEl.href = 'learn.html?course=' + encodeURIComponent(course.slug);
+      roomLinkEl.hidden = false;
+    }
+  }
+
+  if (enrolled) showEnrolled();
+
+  /* -- Full-course sections (only for courses that define them) -- */
+  const extrasEl = document.getElementById('courseExtras');
+  if (extrasEl) extrasEl.innerHTML = buildExtras(course);
+
+  /* -- Start-date countdown -- */
+  const countdownEl = document.getElementById('courseCountdown');
+  if (countdownEl && course.startDate) {
+    const target = new Date(course.startDate + 'T00:00:00+03:00');
+    const labelEl = document.getElementById('courseCountdownLabel');
+    const unitsEl = document.getElementById('courseCountdownUnits');
+
+    document.getElementById('courseStartDate').textContent = target.toLocaleDateString('en-GB', {
+      day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Africa/Mogadishu'
+    });
+    countdownEl.hidden = false;
+
+    function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+    function tick() {
+      const ms = target - Date.now();
+      if (ms <= 0) {
+        labelEl.textContent = 'Course started on';
+        unitsEl.hidden = true;
+        return false;
+      }
+      const s = Math.floor(ms / 1000);
+      document.getElementById('cdcDays').textContent = Math.floor(s / 86400);
+      document.getElementById('cdcHours').textContent = pad(Math.floor(s % 86400 / 3600));
+      document.getElementById('cdcMinutes').textContent = pad(Math.floor(s % 3600 / 60));
+      document.getElementById('cdcSeconds').textContent = pad(s % 60);
+      return true;
+    }
+
+    if (tick()) {
+      const timer = setInterval(function () { if (!tick()) clearInterval(timer); }, 1000);
+    }
   }
 
   /* -- Auth gate + this page's own enrollment form -- */
@@ -118,6 +230,17 @@ document.addEventListener('DOMContentLoaded', function () {
             enrollAsLine.hidden = false;
             enrollAsLine.textContent = 'Enrolling as ' + me.name + ' (' + me.email + ')';
           }
+
+          // Already enrolled? Show that instead of the form.
+          fetch('/api/my-enrollments', { credentials: 'include' })
+            .then(function (r) { return r.json(); })
+            .then(function (result) {
+              const already = result.ok && (result.enrollments || []).some(function (enr) {
+                return enr.courseSlug === course.slug;
+              });
+              if (already) showEnrolled();
+            })
+            .catch(function () {});
         } else {
           form.hidden = true;
           if (authPrompt) authPrompt.hidden = false;
@@ -152,9 +275,7 @@ document.addEventListener('DOMContentLoaded', function () {
               throw new Error(data && data.error ? data.error : 'Submission failed');
             }
             if (!data.alreadyEnrolled) notifyFormspree();
-            if (enrolledNameEl) enrolledNameEl.textContent = course.title;
-            if (bannerEl) bannerEl.hidden = false;
-            if (enrollPanelEl) enrollPanelEl.hidden = true;
+            showEnrolled();
           });
         })
         .catch(function (err) {

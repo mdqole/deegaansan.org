@@ -16,6 +16,12 @@ document.addEventListener('DOMContentLoaded', function () {
       .replace(/"/g, '&quot;');
   }
 
+  function formatStart(iso) {
+    return new Date(iso + 'T00:00:00+03:00').toLocaleDateString('en-GB', {
+      day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Africa/Mogadishu'
+    });
+  }
+
   const gridEl = document.getElementById('browseGrid');
   if (!gridEl) return;
 
@@ -148,8 +154,13 @@ document.addEventListener('DOMContentLoaded', function () {
         }).join('') + '</ul>'
       : '';
 
+    const openUrl = course.weeks && course.weeks.length
+      ? 'learn.html?course=' + encodeURIComponent(course.slug)
+      : url;
+    const openLabel = course.weeks && course.weeks.length ? 'Open Course Room →' : 'Open course →';
+
     const actions = enrolled
-      ? '<span class="browse-enrolled">Enrolled</span><a class="course-view-link" href="' + url + '">Open course →</a>'
+      ? '<span class="browse-enrolled">Enrolled</span><a class="course-view-link" href="' + openUrl + '">' + openLabel + '</a>'
       : '<button type="button" class="course-enroll-btn" data-slug="' + escapeHtml(course.slug) + '">Enroll</button>' +
         '<a class="course-view-link" href="' + url + '">Details →</a>';
 
@@ -165,6 +176,7 @@ document.addEventListener('DOMContentLoaded', function () {
           '<span class="browse-pill">' + escapeHtml(course.format) + '</span>' +
           (course.duration ? '<span class="browse-pill">' + escapeHtml(course.duration) + '</span>' : '') +
           (course.category ? '<span class="browse-pill">' + escapeHtml(course.category) + '</span>' : '') +
+          (course.startDate ? '<span class="browse-pill">Starts ' + escapeHtml(formatStart(course.startDate)) + '</span>' : '') +
           (enrolled ? '<span class="browse-pill green">Enrolled</span>' : '') +
         '</div>' +
         materials +

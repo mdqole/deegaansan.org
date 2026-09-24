@@ -290,6 +290,9 @@ document.addEventListener('DOMContentLoaded', function () {
             '</div>' +
             '<h3>' + escapeHtmlCourse(course.title) + '</h3>' +
             (course.summary ? '<p>' + escapeHtmlCourse(course.summary) + '</p>' : '') +
+            (course.startDate
+              ? '<p class="course-starts">Starts ' + new Date(course.startDate + 'T00:00:00+03:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Africa/Mogadishu' }) + '</p>'
+              : '') +
             '<div class="course-full">' + highlightsHtml + '</div>' +
             '<div class="course-card-actions">' +
               '<button type="button" class="topic-toggle course-toggle">View Details</button>' +

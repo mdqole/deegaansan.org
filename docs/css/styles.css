@@ -1839,6 +1839,293 @@ h2 {
 
 
 /* ============================================
+   FULL COURSE SECTIONS + COURSE ROOM
+   (course.html extras and learn.html)
+   ============================================ */
+
+.banner-link {
+  display: inline-block;
+  margin-left: 0.5rem;
+  font-weight: 700;
+  color: var(--green);
+}
+
+.course-starts {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--green);
+}
+
+.course-countdown {
+  margin: 0 0 2.5rem;
+  padding: 1.5rem 2rem;
+}
+
+.course-countdown .countdown-unit {
+  min-width: 68px;
+  padding: 10px 14px;
+}
+
+.course-countdown .cd-num {
+  font-size: 1.7rem;
+}
+
+.course-countdown .cd-label {
+  font-size: 9px;
+}
+
+.course-section {
+  margin-top: 2.5rem;
+}
+
+.course-section h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem;
+  color: var(--text-dark);
+  margin-bottom: 1rem;
+}
+
+.course-section > p {
+  font-size: 0.92rem;
+  color: var(--text-mid);
+  line-height: 1.7;
+  margin-bottom: 0.8rem;
+}
+
+.pill-list {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.pill-list li {
+  padding: 5px 14px;
+  border: 1px solid var(--green-mid);
+  border-radius: 20px;
+  background: var(--green-pale);
+  font-size: 0.82rem;
+  color: var(--green);
+}
+
+.course-highlights.numbered {
+  counter-reset: item;
+}
+
+.course-highlights.numbered li {
+  counter-increment: item;
+}
+
+.course-highlights.numbered li::before {
+  content: counter(item);
+  top: 0.15em;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--green);
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 18px;
+  text-align: center;
+}
+
+.course-highlights.numbered li {
+  padding-left: 1.7rem;
+}
+
+.syllabus-week,
+.room-module {
+  border: 1px solid rgba(107, 58, 42, 0.15);
+  border-radius: 12px;
+  background: var(--white);
+  margin-bottom: 0.75rem;
+}
+
+.syllabus-week summary,
+.room-module summary {
+  padding: 0.9rem 1.1rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  cursor: pointer;
+}
+
+.syllabus-week-num {
+  display: inline-block;
+  margin-right: 0.75rem;
+  padding: 3px 10px;
+  border-radius: 12px;
+  background: var(--green-pale);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--green);
+}
+
+.syllabus-week-body {
+  padding: 0 1.1rem 1.1rem;
+}
+
+.syllabus-module h4 {
+  margin: 1rem 0 0.4rem;
+  font-size: 0.95rem;
+  color: var(--brown);
+}
+
+.syllabus-topics {
+  padding-left: 1.2rem;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--text-mid);
+}
+
+.syllabus-assign {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  margin-top: 1rem;
+  padding: 0.8rem 1rem;
+  border-left: 4px solid var(--brown);
+  border-radius: 6px;
+  background: var(--brown-pale);
+  font-size: 0.85rem;
+  color: var(--text-mid);
+}
+
+.syllabus-assign strong {
+  color: var(--brown);
+}
+
+.assess-table {
+  width: 100%;
+  margin-bottom: 1rem;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.assess-table td {
+  padding: 0.6rem 0.2rem;
+  border-bottom: 1px solid rgba(107, 58, 42, 0.12);
+  color: var(--text-mid);
+}
+
+.assess-table td:last-child {
+  width: 70px;
+  text-align: right;
+  font-weight: 700;
+  color: var(--green);
+}
+
+.room-page {
+  padding: 3rem 4rem 5rem;
+}
+
+.room-inner {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.room-inner h1 {
+  margin: 0.5rem 0 1rem;
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  line-height: 1.25;
+  color: var(--text-dark);
+}
+
+.room-week {
+  margin-top: 1.75rem;
+  padding: 1.5rem;
+  border: 1px solid rgba(107, 58, 42, 0.15);
+  border-radius: 16px;
+  background: var(--white);
+}
+
+.room-week header {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.room-week h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.3rem;
+  color: var(--text-dark);
+}
+
+.room-modules {
+  margin-bottom: 1.25rem;
+}
+
+.room-module {
+  background: var(--cream);
+}
+
+.room-module .syllabus-topics {
+  padding-bottom: 0.9rem;
+  margin-left: 1.1rem;
+}
+
+.room-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 1rem;
+}
+
+.room-block {
+  padding: 1rem 1.1rem;
+  border: 1px solid rgba(107, 58, 42, 0.12);
+  border-radius: 12px;
+  background: var(--cream);
+}
+
+.room-block h4 {
+  margin-bottom: 0.6rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-light);
+}
+
+.room-assign {
+  margin-top: 1rem;
+}
+
+.room-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  font-size: 0.85rem;
+}
+
+.room-list li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  color: var(--text-mid);
+}
+
+.room-soon {
+  font-size: 0.82rem;
+  font-style: italic;
+  color: var(--text-light);
+}
+
+@media (max-width: 900px) {
+  .room-page {
+    padding: 2rem 1.25rem 4rem;
+  }
+
+  .course-countdown {
+    padding: 1.25rem;
+  }
+}
+
+
+/* ============================================
    GALLERY
    ============================================ */
 

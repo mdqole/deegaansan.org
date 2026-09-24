@@ -32,6 +32,28 @@
                 the course's own page. Leave as "" if there's
                 nothing more to add. Paragraphs are separated
                 by a blank line, same as topics-data.js.
+   OPTIONAL FIELDS FOR A FULL COURSE (all shown automatically
+   on the course page when present; the first course below is a
+   complete example):
+   startDate   — "YYYY-MM-DD". Shows a countdown on the course
+                 page. Treated as midnight East Africa Time.
+   audience    — array: who the course is for
+   delivery    — array: how the course is run
+   outcomes    — array: "By the end you'll be able to..."
+   weeks       — array of { week, title, modules: [{ n, title,
+                 topics: [] }], assignments: [{ title, brief }] }.
+                 Also powers the enrolled students' Course Room
+                 (learn.html). A week may also have optional
+                 sessions: [{ label, when, link }], quiz: { label,
+                 link }, videos: [{ label, link }] and
+                 materials: [{ label, file }] — anything left out
+                 shows a "coming soon" placeholder in the room.
+   assessment  — array of { label, weight } (weights add up to 100)
+   passMark    — pass percentage, e.g. 70
+   certificate — text describing the completion certificate
+   finalProject— { title, intro, sections: [] }
+   tools       — array: tools and platforms used
+
    materials  — array of { label, file } shown on a student's
                 "My Courses" dashboard once they've enrolled,
                 e.g. { label: "Week 1 Handout (PDF)", file:
@@ -40,6 +62,346 @@
    ============================================ */
 
 const COURSES = [
+
+  {
+    title: "Ecosystem Restoration and Integrated Water Resources Management",
+    slug: "ecosystem-restoration-iwrm",
+    image: "images/gallery-4.jpg",
+    skills: [
+      "Ecosystem Restoration",
+      "Integrated Water Resources Management",
+      "Soil & Water Conservation",
+      "FMNR & Assisted Regeneration",
+      "Catchment Planning",
+      "Restoration Monitoring"
+    ],
+    category: "Restoration",
+    format: "Live cohort",
+    duration: "6 weeks · 24–30 hours",
+    startDate: "2026-11-10",
+    summary: "Restoring landscapes, managing water and building climate resilience — a practical online course on ecosystem restoration and Integrated Water Resources Management for dryland, pastoral, agricultural and displacement-affected landscapes.",
+    highlights: [
+      "How land, vegetation, soil and water work as one connected system",
+      "Half-moons, bioswales, contour bunds, infiltration trenches and check dams",
+      "Farmer Managed Natural Regeneration and tree establishment",
+      "Rangeland restoration, catchment planning and rainwater harvesting",
+      "Restoration for drought resilience and flood risk reduction",
+      "Community-led planning, monitoring and maintenance"
+    ],
+    content: `This course strengthens participants' practical understanding of ecosystem restoration and Integrated Water Resources Management (IWRM) in dryland, agricultural, pastoral and displacement-affected landscapes.
+
+Participants learn how land, vegetation, soil and water function as one interconnected system, and how interventions such as half-moons, demi-lunes, bioswales, contour bunds, infiltration trenches, check dams, water-spreading structures, tree establishment, Farmer Managed Natural Regeneration (FMNR), Assisted Natural Regeneration (ANR), rangeland restoration, gully rehabilitation, rainwater harvesting and catchment protection can be selected, designed, implemented and monitored within an integrated landscape approach.
+
+The course places particular emphasis on dryland environments similar to Somalia, where drought, irregular rainfall, flash floods, erosion, vegetation loss, land degradation and competition over natural resources frequently occur together.
+
+Healthy landscapes capture rainfall. Healthy soils absorb water. Healthy vegetation protects soils. Healthy catchments regulate water. The aim is not simply to construct structures or plant trees — it is to restore the function of the landscape so that water is slowed, spreads safely and infiltrates, soil stays in place, vegetation regenerates, and communities are better prepared for droughts and floods.`,
+    audience: [
+      "Project officers",
+      "Field officers",
+      "Community mobilizers",
+      "Natural resource management staff",
+      "WASH staff",
+      "Agriculture and livelihoods staff",
+      "Disaster risk reduction staff",
+      "Government technical officers",
+      "Community Resilience Committees",
+      "Community Resilience and Early Warning structures",
+      "Water committees",
+      "Natural Resource Management Committees",
+      "Farmers",
+      "Agro-pastoralists",
+      "Youth environmental groups",
+      "NGO and civil society staff"
+    ],
+    delivery: [
+      "2 online sessions per week, 1.5–2 hours each",
+      "Short recorded lessons",
+      "Practical field exercises",
+      "Weekly quizzes",
+      "Group assignments",
+      "A final restoration and water-management plan",
+      "Also available as an intensive 5-day online refresher"
+    ],
+    outcomes: [
+      "Explain the basic principles of ecosystem restoration",
+      "Explain the principles of Integrated Water Resources Management",
+      "Recognize relationships between land degradation, soil, water, vegetation and livelihoods",
+      "Conduct a simple landscape degradation assessment",
+      "Identify major erosion and water-flow pathways within a catchment",
+      "Select appropriate soil and water conservation measures",
+      "Understand the construction and purpose of common restoration structures",
+      "Apply FMNR and assisted natural regeneration approaches",
+      "Plan tree establishment and vegetation restoration",
+      "Understand watershed and catchment management",
+      "Design measures to improve infiltration and groundwater recharge",
+      "Integrate ecosystem restoration with drought and flood risk reduction",
+      "Identify environmental and social risks associated with restoration interventions",
+      "Engage communities in restoration planning",
+      "Establish practical indicators for monitoring ecosystem recovery",
+      "Develop a basic community-level ecosystem restoration and IWRM plan"
+    ],
+    weeks: [
+      {
+        week: 1,
+        title: "Foundations: Ecosystems, Restoration and Water",
+        modules: [
+          {
+            n: 1,
+            title: "Understanding Ecosystems and Landscape Degradation",
+            topics: [
+              "Ecosystems, landscapes, watersheds, biodiversity, soil, vegetation, water and livelihoods",
+              "Ecosystem services: provisioning, regulating, supporting, cultural and social",
+              "Recognizing degradation: erosion, gullies, vegetation loss, overgrazing, crusting, compaction, invasive species, declining groundwater",
+              "Exercise: how has a landscape you know changed over 10–20 years?"
+            ]
+          },
+          {
+            n: 2,
+            title: "Ecosystem Restoration Principles",
+            topics: [
+              "Prevent – Protect – Manage – Restore – Monitor",
+              "Passive restoration versus active restoration",
+              "The restoration hierarchy: avoid, reduce, protect, encourage natural recovery, actively restore, monitor and adapt",
+              "Group exercise: choosing the right approach for different landscapes"
+            ]
+          },
+          {
+            n: 3,
+            title: "Integrated Water Resources Management (IWRM)",
+            topics: [
+              "Managing water together with land, livestock, forests, settlements and ecosystems",
+              "Core IWRM questions: where water comes from, who uses it, what happens upstream and downstream",
+              "The water cycle: rainfall, runoff, infiltration, recharge, evaporation and storage",
+              "Slow, spread, store and safely use water across the landscape",
+              "Exercise: draw a simple watershed and identify upstream–downstream relationships"
+            ]
+          }
+        ],
+        assignments: [
+          {
+            title: "Assignment 1 – Spot Degradation",
+            brief: "Photograph three signs of degradation in your area (erosion, bare soil, a gully, degraded vegetation) and explain the probable causes."
+          }
+        ]
+      },
+      {
+        week: 2,
+        title: "Soil, Water Conservation and Restoration Structures",
+        modules: [
+          {
+            n: 4,
+            title: "Soil and Water Conservation",
+            topics: [
+              "Soil texture, organic matter, fertility, moisture and compaction",
+              "Simple field test: how quickly water infiltrates bare, grassed, farmed and compacted soil",
+              "Contour-based restoration: slope, contour lines, runoff velocity and water retention",
+              "Building and using a simple A-frame level"
+            ]
+          },
+          {
+            n: 5,
+            title: "Restoration Structures",
+            topics: [
+              "Half-moons / demi-lunes",
+              "Bioswales",
+              "Contour bunds",
+              "Infiltration trenches",
+              "Check dams",
+              "Gully rehabilitation — treating the gully head, bed, banks and the catchment above"
+            ]
+          }
+        ],
+        assignments: [
+          {
+            title: "Assignment 2 – Follow the Water",
+            brief: "During or after rainfall, identify where runoff starts, where it concentrates, where erosion occurs, and where water could be safely slowed or stored."
+          }
+        ]
+      },
+      {
+        week: 3,
+        title: "Vegetation, Rangelands and Catchments",
+        modules: [
+          {
+            n: 6,
+            title: "Vegetation Restoration, FMNR and Tree Establishment",
+            topics: [
+              "Farmer Managed Natural Regeneration (FMNR) step by step",
+              "Assisted Natural Regeneration",
+              "Tree establishment: before, during and after planting",
+              "Measuring success by seedling survival, not seedlings planted"
+            ]
+          },
+          {
+            n: 7,
+            title: "Rangeland and Grazing-Land Restoration",
+            topics: [
+              "Causes of rangeland degradation and bush encroachment",
+              "Controlled and rotational grazing, resting, reseeding and protecting dry-season grazing areas",
+              "Community grazing agreements and water-point placement",
+              "Group exercise: build a grazing calendar"
+            ]
+          },
+          {
+            n: 8,
+            title: "Catchment and Watershed Management",
+            topics: [
+              "Planning across the whole landscape, not isolated sites",
+              "Upper, middle and lower catchment priorities",
+              "Why a downstream structure can fail if the upstream cause is ignored"
+            ]
+          }
+        ],
+        assignments: [
+          {
+            title: "Assignment 3 – Restoration Opportunity",
+            brief: "Identify one degraded site and recommend protection, FMNR, half-moons, contour bunds, check dams, bioswales or tree establishment — and explain why."
+          }
+        ]
+      },
+      {
+        week: 4,
+        title: "Water Harvesting, Drought and Flood Resilience",
+        modules: [
+          {
+            n: 9,
+            title: "Rainwater Harvesting and Water Conservation",
+            topics: [
+              "Rooftop and surface-runoff harvesting, farm ponds, earth dams, water pans and infiltration basins",
+              "Water storage versus water retention",
+              "Water efficiency: drip irrigation, mulching, scheduling and water-efficient crops"
+            ]
+          },
+          {
+            n: 10,
+            title: "Ecosystem Restoration for Drought Resilience",
+            topics: [
+              "The cycle from land degradation to greater drought vulnerability",
+              "Drought-resilience measures: soil-water conservation, FMNR, rangeland restoration, water harvesting, groundwater recharge"
+            ]
+          },
+          {
+            n: 11,
+            title: "Ecosystem Restoration and Flood Risk Reduction",
+            topics: [
+              "Flash-flood pathways, drainage blockage and floodplain management",
+              "Water-spreading areas, vegetative barriers, bioswales and infiltration structures",
+              "Exercise: map a flood-prone settlement — where water enters, flows, accumulates and who is exposed"
+            ]
+          }
+        ],
+        assignments: []
+      },
+      {
+        week: 5,
+        title: "Community Planning, Governance and Design",
+        modules: [
+          {
+            n: 12,
+            title: "Community-Led Landscape Planning",
+            topics: [
+              "Participatory resource mapping, transect walks, seasonal calendars and historical timelines",
+              "Problem trees, stakeholder mapping and community action plans",
+              "Community mapping exercise: identify priority restoration areas"
+            ]
+          },
+          {
+            n: 13,
+            title: "Natural Resource Governance and Conflict Sensitivity",
+            topics: [
+              "Common disputes over water points, grazing areas, boundaries and livestock routes",
+              "Planning questions: who owns, uses, benefits and may lose access",
+              "Involving women and marginalized groups in decisions"
+            ]
+          },
+          {
+            n: 14,
+            title: "Designing a Restoration Intervention",
+            topics: [
+              "Define the problem and its cause",
+              "Set a restoration objective",
+              "Select the intervention or combination of interventions",
+              "Establish indicators"
+            ]
+          }
+        ],
+        assignments: [
+          {
+            title: "Assignment 4 – Community Knowledge",
+            brief: "Interview one farmer, pastoralist or community elder: how has this landscape changed during the last 10–20 years?"
+          },
+          {
+            title: "Assignment 5 – Design Challenge",
+            brief: "Draw one restoration intervention showing the direction of slope, direction of water, structure, vegetation, overflow and maintenance requirement."
+          }
+        ]
+      },
+      {
+        week: 6,
+        title: "Monitoring, Maintenance and Final Plan",
+        modules: [
+          {
+            n: 15,
+            title: "Monitoring Ecosystem Restoration",
+            topics: [
+              "Land, water, vegetation, livelihood and community indicators",
+              "Choosing practical indicators a community can actually measure"
+            ]
+          },
+          {
+            n: 16,
+            title: "Maintenance and Sustainability",
+            topics: [
+              "A simple maintenance plan for every intervention",
+              "What to inspect, how often, and which group is responsible"
+            ]
+          }
+        ],
+        assignments: [
+          {
+            title: "Final Project – Community Ecosystem Restoration and IWRM Plan",
+            brief: "Prepare a 12-section restoration and water-management plan for one real landscape (see the full outline on the course page)."
+          }
+        ]
+      }
+    ],
+    assessment: [
+      { label: "Participation", weight: 10 },
+      { label: "Weekly quizzes", weight: 20 },
+      { label: "Practical assignments", weight: 25 },
+      { label: "Group exercises", weight: 15 },
+      { label: "Final Ecosystem Restoration & IWRM Plan", weight: 30 }
+    ],
+    passMark: 70,
+    certificate: "Participants who complete the course and its assignments receive a Certificate of Completion — Ecosystem Restoration and Integrated Water Resources Management.",
+    finalProject: {
+      title: "Community Ecosystem Restoration and IWRM Plan",
+      intro: "Each participant or group prepares a plan for one real landscape, covering:",
+      sections: [
+        "Location and landscape description",
+        "Major environmental problems",
+        "Community livelihood systems",
+        "Water resources",
+        "Land and vegetation condition",
+        "Water-flow and erosion map",
+        "Priority restoration areas",
+        "Proposed interventions",
+        "Community roles",
+        "Implementation timeline",
+        "Monitoring indicators",
+        "Maintenance plan"
+      ]
+    },
+    tools: [
+      "Zoom or Microsoft Teams for live sessions",
+      "WhatsApp for participant communication",
+      "Google Classroom or Moodle for learning materials",
+      "Google Forms or Microsoft Forms for quizzes",
+      "KoboToolbox for field assessments",
+      "Google Earth / QGIS for basic landscape mapping where capacity permits"
+    ],
+    materials: []
+  },
 
   {
     title: "Rangeland Restoration Fundamentals",

@@ -54,6 +54,7 @@
 
       <div class="enrolled-banner" id="courseEnrolledBanner" hidden>
         You're enrolled in <strong id="enrolledCourseName"></strong> — we'll be in touch about dates, cost, and how to get started.
+        <a class="banner-link" id="courseRoomLink" href="#" hidden>Open the Course Room →</a>
       </div>
 
       <div id="courseNotFound" class="course-not-found" hidden>
@@ -70,12 +71,27 @@
         <h1 id="courseTitle"></h1>
         <p class="course-page-summary" id="courseSummary"></p>
 
+        <div class="next-up course-countdown" id="courseCountdown" hidden>
+          <div>
+            <div class="next-up-label" id="courseCountdownLabel">Course starts</div>
+            <div class="next-up-name" id="courseStartDate"></div>
+          </div>
+          <div class="countdown" id="courseCountdownUnits">
+            <div class="countdown-unit"><span class="cd-num" id="cdcDays">0</span><span class="cd-label">Days</span></div>
+            <div class="countdown-unit"><span class="cd-num" id="cdcHours">00</span><span class="cd-label">Hrs</span></div>
+            <div class="countdown-unit"><span class="cd-num" id="cdcMinutes">00</span><span class="cd-label">Min</span></div>
+            <div class="countdown-unit"><span class="cd-num" id="cdcSeconds">00</span><span class="cd-label">Sec</span></div>
+          </div>
+        </div>
+
         <div class="course-page-body">
           <div class="course-page-main">
             <h3>What You'll Learn</h3>
             <ul class="course-highlights" id="courseHighlights"></ul>
 
             <div id="courseContent" class="course-page-content"></div>
+
+            <div id="courseExtras"></div>
           </div>
 
           <div class="course-page-side">

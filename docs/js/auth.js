@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // the homepage or an external URL) falls back to the browser, so ?next=
     // can't be used as an open redirect.
     function safeNext(raw) {
-      if (raw && /^\/?course\.html\?course=[a-z0-9-]+$/i.test(raw)) return raw;
+      if (raw && /^\/?(course|learn)\.html\?course=[a-z0-9-]+$/i.test(raw)) return raw;
       return 'dashboard.html';
     }
     const next = safeNext(params.get('next'));

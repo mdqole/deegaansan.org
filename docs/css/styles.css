@@ -124,6 +124,13 @@ nav {
   background: var(--green-light) !important;
 }
 
+@media (min-width: 861px) {
+  #navAuthSlot {
+    display: flex;
+    align-items: center;
+  }
+}
+
 .nav-toggle {
   display: none;
   flex-direction: column;

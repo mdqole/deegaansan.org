@@ -7,6 +7,16 @@
 
 document.addEventListener('DOMContentLoaded', function () {
 
+  // A SyntaxError means the server answered with a web page instead of JSON
+  // (e.g. the account service isn't running on this host) — don't show the
+  // visitor a raw "Unexpected token '<'" message.
+  function friendlyError(err) {
+    if (err && err.name === 'SyntaxError') {
+      return "We couldn't reach the account service. Please try again in a moment.";
+    }
+    return (err && err.message) || 'Something went wrong — please try again.';
+  }
+
   function getMe() {
     return fetch('/api/auth/me', { credentials: 'include' })
       .then(function (r) { return r.json(); })
@@ -108,7 +118,7 @@ document.addEventListener('DOMContentLoaded', function () {
           btn.textContent = 'Log In →';
           btn.disabled = false;
           if (statusEl) {
-            statusEl.textContent = err.message || 'Something went wrong — please try again.';
+            statusEl.textContent = friendlyError(err);
             statusEl.className = 'form-status error';
           }
         });
@@ -192,7 +202,7 @@ document.addEventListener('DOMContentLoaded', function () {
           btn.textContent = 'Create Account →';
           btn.disabled = false;
           if (statusEl) {
-            statusEl.textContent = err.message || 'Something went wrong — please try again.';
+            statusEl.textContent = friendlyError(err);
             statusEl.className = 'form-status error';
           }
         });

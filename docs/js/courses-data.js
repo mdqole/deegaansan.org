@@ -18,6 +18,8 @@
    image      — thumbnail shown on the course browser cards,
                 e.g. "images/my-course.jpg" (put the file in
                 the images/ folder).
+   skills     — array of short skill names shown as "Skills
+                you'll gain: ..." on the course browser cards.
    category   — short tag shown on the card, e.g.
                 "Restoration", "Climate", "Community"
    format     — e.g. "Self-paced", "Live cohort"
@@ -43,6 +45,7 @@ const COURSES = [
     title: "Rangeland Restoration Fundamentals",
     slug: "rangeland-restoration-fundamentals",
     image: "images/SWC.jpeg",
+    skills: ["Rangeland Assessment", "Reseeding", "Rotational Grazing", "Ecological Monitoring", "Restoration Planning"],
     category: "Restoration",
     format: "Self-paced",
     duration: "4 weeks",
@@ -65,6 +68,7 @@ From there, the course moves into hands-on technique — reseeding methods suite
     title: "Soil & Water Conservation Techniques",
     slug: "soil-water-conservation-techniques",
     image: "images/Gallery-3.jpg",
+    skills: ["Erosion Control", "Water Harvesting", "Watershed Protection", "Community Maintenance", "Soil Conservation"],
     category: "Conservation",
     format: "Live cohort",
     duration: "6 sessions",
@@ -87,6 +91,7 @@ Throughout, the course draws on real case studies from Deegansan's Bay Region co
     title: "Community-Based Climate Adaptation",
     slug: "community-based-climate-adaptation",
     image: "images/gallery-5.jpg",
+    skills: ["Climate Forecasting", "Early Warning Systems", "Evacuation Planning", "Community Facilitation", "Climate Advocacy"],
     category: "Climate",
     format: "Self-paced",
     duration: "3 weeks",

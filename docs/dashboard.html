@@ -36,29 +36,27 @@
   <main class="browse-page">
     <div class="browse-inner">
 
-      <div class="browse-head">
-        <div>
-          <span class="section-tag">Course Browser</span>
-          <h1 id="dashboardGreeting">Courses</h1>
+      <div class="browse-hero">
+        <span class="section-tag">Course Browser</span>
+        <h1 id="dashboardGreeting">Courses</h1>
+
+        <div class="browse-searchbox" id="browseSearchBox">
+          <input type="search" id="browseSearch" placeholder="What do you want to learn?" autocomplete="off" aria-label="Search courses" />
+          <button type="button" class="browse-search-btn" id="browseSearchBtn" aria-label="Search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></svg>
+          </button>
+          <div class="browse-suggest" id="browseSuggest" hidden>
+            <h3>Popular topics</h3>
+            <div class="browse-suggest-chips" id="suggestChips"></div>
+            <h3>Start with these</h3>
+            <div class="browse-suggest-cards" id="suggestCards"></div>
+          </div>
         </div>
-        <input type="search" id="browseSearch" class="browse-search" placeholder="What do you want to learn?" aria-label="Search courses" />
       </div>
 
-      <div class="browse-toolbar">
-        <div class="browse-chips" id="browseChips">
-          <button type="button" class="browse-chip active" data-filter="all">All <span class="browse-chip-count" id="countAll">0</span></button>
-          <button type="button" class="browse-chip" data-filter="mine">My Courses <span class="browse-chip-count" id="countMine">0</span></button>
-          <button type="button" class="browse-chip" data-filter="available">Available <span class="browse-chip-count" id="countAvailable">0</span></button>
-        </div>
-        <label class="browse-sort">Sort:
-          <select id="browseSort">
-            <option value="default">Recommended</option>
-            <option value="az">Title A–Z</option>
-            <option value="recent">Recently enrolled</option>
-          </select>
-        </label>
-      </div>
+      <div class="browse-filters" id="browseFilters"></div>
 
+      <p class="browse-results" id="browseResults"></p>
       <p class="form-status" id="browseStatus"></p>
 
       <div id="browseGrid" class="browse-grid">

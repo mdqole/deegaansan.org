@@ -173,8 +173,152 @@ document.addEventListener('DOMContentLoaded', function () {
     }).join('') + '<p class="room-soon">How to submit (WhatsApp or the learning platform) will be shared before the course starts.</p>';
   }
 
+  /* ---------- module lessons (reading + quiz + exercise) ---------- */
+
+  function notesKey(m) { return 'deegaansan.notes.' + slug + '.m' + m.n; }
+
+  function readNotes(m) {
+    try { return localStorage.getItem(notesKey(m)) || ''; } catch (e) { return ''; }
+  }
+
+  function lessonSectionHtml(s) {
+    const terms = s.terms && s.terms.length
+      ? '<ul class="lesson-terms">' + s.terms.map(function (t) {
+          return '<li><strong>' + escapeHtml(t.term) + ':</strong> ' + escapeHtml(t.text) + '</li>';
+        }).join('') + '</ul>'
+      : '';
+    const groups = s.groups && s.groups.length
+      ? '<ol class="lesson-groups">' + s.groups.map(function (g) {
+          return '<li><strong>' + escapeHtml(g.title) + '</strong>' +
+            (g.text ? '<p>' + escapeHtml(g.text) + '</p>' : '') +
+            (g.items && g.items.length ? '<ul>' + g.items.map(function (it) { return '<li>' + escapeHtml(it) + '</li>'; }).join('') + '</ul>' : '') +
+          '</li>';
+        }).join('') + '</ol>'
+      : '';
+    return '<div class="lesson-section"><h3>' + escapeHtml(s.title) + '</h3>' +
+      (s.intro ? '<p>' + escapeHtml(s.intro) + '</p>' : '') + terms + groups + '</div>';
+  }
+
+  function lessonQuizHtml(m) {
+    const quiz = m.lesson.quiz;
+    if (!quiz || !quiz.questions || !quiz.questions.length) return '';
+    return '<div class="lesson-section lesson-quiz" data-module="' + m.n + '">' +
+      '<h3>' + escapeHtml(quiz.title || 'Knowledge Check') + '</h3>' +
+      (quiz.intro ? '<p>' + escapeHtml(quiz.intro) + '</p>' : '') +
+      quiz.questions.map(function (q, qi) {
+        return '<fieldset class="quiz-q" data-q="' + qi + '"><legend>Question ' + (qi + 1) + ': ' + escapeHtml(q.q) + '</legend>' +
+          q.options.map(function (o, oi) {
+            return '<label class="quiz-opt"><input type="radio" name="m' + m.n + 'q' + qi + '" value="' + oi + '"> ' +
+              '<span><b>' + String.fromCharCode(65 + oi) + ')</b> ' + escapeHtml(o) + '</span></label>';
+          }).join('') +
+          '<p class="quiz-feedback" hidden></p>' +
+        '</fieldset>';
+      }).join('') +
+      '<div class="quiz-actions"><button type="button" class="btn-send quiz-check">Check my answers</button>' +
+        '<button type="button" class="quiz-retry" hidden>Try again</button></div>' +
+      '<p class="quiz-result" role="status" hidden></p>' +
+    '</div>';
+  }
+
+  function lessonExerciseHtml(m) {
+    const ex = m.lesson.exercise;
+    if (!ex) return '';
+    return '<div class="lesson-section lesson-exercise"><h3>' + escapeHtml(ex.title || 'Exercise') + '</h3>' +
+      (ex.intro ? '<p>' + escapeHtml(ex.intro) + '</p>' : '') +
+      (ex.prompts && ex.prompts.length
+        ? '<h4>' + escapeHtml(ex.promptsTitle || 'Reflection Prompts') + '</h4><ol class="lesson-groups">' +
+          ex.prompts.map(function (p) { return '<li><strong>' + escapeHtml(p.label) + ':</strong> ' + escapeHtml(p.text) + '</li>'; }).join('') + '</ol>'
+        : '') +
+      (ex.closing ? '<p>' + escapeHtml(ex.closing) + '</p>' : '') +
+      '<label class="lesson-notes-label" for="notes-m' + m.n + '">Your course notebook</label>' +
+      '<textarea class="lesson-notes" id="notes-m' + m.n + '" data-module="' + m.n + '" rows="6" placeholder="Jot down your observations here…">' + escapeHtml(readNotes(m)) + '</textarea>' +
+      '<p class="room-soon">Saved automatically in this browser only — it isn\'t sent anywhere.</p>' +
+    '</div>';
+  }
+
+  function lessonHtml(m) {
+    const l = m.lesson;
+    return (l.intro ? '<p class="lesson-intro">' + escapeHtml(l.intro) + '</p>' : '') +
+      (l.sections || []).map(lessonSectionHtml).join('') +
+      lessonQuizHtml(m) + lessonExerciseHtml(m);
+  }
+
+  function findModule(n) {
+    for (let i = 0; i < course.weeks.length; i++) {
+      const mods = course.weeks[i].modules || [];
+      for (let j = 0; j < mods.length; j++) if (String(mods[j].n) === String(n)) return mods[j];
+    }
+    return null;
+  }
+
+  const stepBody = document.getElementById('roomStepBody');
+
+  stepBody.addEventListener('click', function (e) {
+    const wrap = e.target.closest('.lesson-quiz');
+    if (!wrap) return;
+    const m = findModule(wrap.getAttribute('data-module'));
+    if (!m) return;
+    const questions = m.lesson.quiz.questions;
+    const result = wrap.querySelector('.quiz-result');
+
+    if (e.target.classList.contains('quiz-check')) {
+      const picks = questions.map(function (q, qi) {
+        const el = wrap.querySelector('input[name="m' + m.n + 'q' + qi + '"]:checked');
+        return el ? Number(el.value) : -1;
+      });
+      if (picks.indexOf(-1) !== -1) {
+        result.hidden = false;
+        result.className = 'quiz-result';
+        result.textContent = 'Please answer all ' + questions.length + ' questions first.';
+        return;
+      }
+      let score = 0;
+      questions.forEach(function (q, qi) {
+        const box = wrap.querySelector('.quiz-q[data-q="' + qi + '"]');
+        const fb = box.querySelector('.quiz-feedback');
+        const ok = picks[qi] === q.answer;
+        if (ok) score++;
+        box.classList.toggle('correct', ok);
+        box.classList.toggle('wrong', !ok);
+        fb.hidden = false;
+        fb.textContent = ok
+          ? '✓ Correct.'
+          : '✗ Not quite — the correct answer is ' + String.fromCharCode(65 + q.answer) + ') ' + q.options[q.answer];
+        box.querySelectorAll('input').forEach(function (inp) { inp.disabled = true; });
+      });
+      result.hidden = false;
+      result.className = 'quiz-result ' + (score === questions.length ? 'perfect' : '');
+      result.textContent = 'You scored ' + score + ' out of ' + questions.length + '.' +
+        (score === questions.length ? ' Excellent work!' : ' Review the lesson above and try again.');
+      wrap.querySelector('.quiz-check').hidden = true;
+      wrap.querySelector('.quiz-retry').hidden = false;
+    }
+
+    if (e.target.classList.contains('quiz-retry')) {
+      wrap.querySelectorAll('input').forEach(function (inp) { inp.checked = false; inp.disabled = false; });
+      wrap.querySelectorAll('.quiz-q').forEach(function (box) {
+        box.classList.remove('correct', 'wrong');
+        box.querySelector('.quiz-feedback').hidden = true;
+      });
+      result.hidden = true;
+      wrap.querySelector('.quiz-check').hidden = false;
+      e.target.hidden = true;
+    }
+  });
+
+  stepBody.addEventListener('input', function (e) {
+    if (!e.target.classList.contains('lesson-notes')) return;
+    const m = findModule(e.target.getAttribute('data-module'));
+    if (!m) return;
+    try { localStorage.setItem(notesKey(m), e.target.value); } catch (err) { /* private mode: ignore */ }
+  });
+
   function weekHtml(week) {
     const modules = (week.modules || []).map(function (m) {
+      if (m.lesson) {
+        return '<details class="room-module has-lesson" open><summary>Module ' + m.n + ' — ' + escapeHtml(m.title) + '</summary>' +
+          '<div class="lesson">' + lessonHtml(m) + '</div></details>';
+      }
       return '<details class="room-module"><summary>Module ' + m.n + ' — ' + escapeHtml(m.title) + '</summary>' +
         '<ul class="syllabus-topics">' + (m.topics || []).map(function (t) { return '<li>' + escapeHtml(t) + '</li>'; }).join('') + '</ul>' +
       '</details>';

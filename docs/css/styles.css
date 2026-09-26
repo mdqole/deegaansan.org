@@ -2239,6 +2239,173 @@ h2 {
   margin-left: 1.1rem;
 }
 
+.room-module.has-lesson {
+  background: var(--white);
+}
+
+.room-module.has-lesson > summary {
+  font-size: 1.05rem;
+}
+
+.lesson {
+  padding: 0 1.25rem 1.25rem;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--text-mid);
+}
+
+.lesson-intro {
+  margin-bottom: 1.25rem;
+}
+
+.lesson-section {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(107, 58, 42, 0.12);
+}
+
+.lesson-section h3 {
+  margin-bottom: 0.6rem;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.15rem;
+  color: var(--brown);
+}
+
+.lesson-section h4 {
+  margin: 1rem 0 0.4rem;
+  font-size: 0.9rem;
+  color: var(--text-dark);
+}
+
+.lesson-terms,
+.lesson-groups {
+  margin: 0.75rem 0 0;
+  padding-left: 1.2rem;
+}
+
+.lesson-terms {
+  list-style: none;
+  padding-left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.lesson-terms li {
+  padding: 0.7rem 1rem;
+  border-left: 4px solid var(--green-mid);
+  border-radius: 6px;
+  background: var(--cream);
+}
+
+.lesson-terms strong,
+.lesson-groups > li > strong {
+  color: var(--text-dark);
+}
+
+.lesson-groups > li {
+  margin-bottom: 0.9rem;
+}
+
+.lesson-groups ul {
+  margin: 0.3rem 0 0;
+  padding-left: 1.2rem;
+}
+
+.lesson-groups p {
+  margin: 0.15rem 0 0;
+}
+
+.quiz-q {
+  margin: 1rem 0 0;
+  padding: 0.9rem 1rem;
+  border: 1px solid rgba(107, 58, 42, 0.15);
+  border-radius: 10px;
+  background: var(--cream);
+}
+
+.quiz-q legend {
+  padding: 0 0.4rem;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.quiz-q.correct {
+  border-color: var(--green-light);
+  background: var(--green-pale);
+}
+
+.quiz-q.wrong {
+  border-color: var(--brown-mid);
+  background: var(--brown-pale);
+}
+
+.quiz-opt {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+  padding: 0.35rem 0;
+  cursor: pointer;
+}
+
+.quiz-opt input {
+  margin-top: 0.35rem;
+}
+
+.quiz-feedback {
+  margin-top: 0.5rem;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.quiz-q.correct .quiz-feedback { color: var(--green); }
+.quiz-q.wrong .quiz-feedback { color: var(--brown); }
+
+.quiz-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.quiz-retry {
+  padding: 0.7rem 1.4rem;
+  border: 1px solid var(--green);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--green);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.quiz-result {
+  margin-top: 0.8rem;
+  font-weight: 700;
+  color: var(--brown);
+}
+
+.quiz-result.perfect {
+  color: var(--green);
+}
+
+.lesson-notes-label {
+  display: block;
+  margin: 1rem 0 0.4rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-light);
+}
+
+.lesson-notes {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 1px solid rgba(107, 58, 42, 0.25);
+  border-radius: 8px;
+  font: inherit;
+  resize: vertical;
+}
+
 .room-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));

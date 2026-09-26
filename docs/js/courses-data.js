@@ -48,6 +48,18 @@
                  link }, videos: [{ label, link }] and
                  materials: [{ label, file }] — anything left out
                  shows a "coming soon" placeholder in the room.
+                 A module may also carry a full reading lesson:
+                 lesson: { intro, sections: [{ title, intro,
+                 terms: [{ term, text }] and/or groups: [{ title,
+                 text, items: [] }] }], quiz: { title, intro,
+                 questions: [{ q, options: [], answer }] } (answer =
+                 0-based index of the right option), exercise: {
+                 title, intro, promptsTitle, prompts: [{ label,
+                 text }], closing } }. Modules with a lesson open
+                 automatically in the Course Room. Note the quiz
+                 answers are visible to anyone who views the page
+                 source, so use these for self-check practice, not
+                 for marks.
    welcome     — the "Welcome to the course" message shown as the
                  first step of the Course Room. Paragraphs are
                  separated by a blank line.
@@ -181,7 +193,108 @@ The Course Team`,
               "Ecosystem services: provisioning, regulating, supporting, cultural and social",
               "Recognizing degradation: erosion, gullies, vegetation loss, overgrazing, crusting, compaction, invasive species, declining groundwater",
               "Exercise: how has a landscape you know changed over 10–20 years?"
-            ]
+            ],
+            lesson: {
+              intro: "Welcome to Module 1 of our interactive online course. In this module, we will explore the foundational concepts of ecosystems and landscapes, examine the vital services they provide, and learn how to identify the signs of environmental degradation.",
+              sections: [
+                {
+                  title: "1. Core Concepts: The Building Blocks of Landscapes",
+                  intro: "To restore a landscape, we first need to understand how its components interact. A landscape is not just a collection of plants and animals; it is a dynamic, interconnected network of natural systems.",
+                  terms: [
+                    { term: "Ecosystems", text: "A community of living organisms (plants, animals, and microbes) interacting with each other and their non-living physical environment (soil, water, air)." },
+                    { term: "Landscapes", text: "A broader geographic area made up of a mosaic of interacting ecosystems, shaped by both natural processes and human activities." },
+                    { term: "Watersheds", text: "The topographic area of land where all precipitation drains to a common outlet, such as a river, lake, or ocean. Watersheds are essential units for managing land and water resources sustainably." },
+                    { term: "Biodiversity", text: "The variety of life at all levels—genes, species, and entire ecosystems. High biodiversity builds resilience against climate shocks and pests." },
+                    { term: "Soil, Vegetation, and Water", text: "The holy trinity of land health. Healthy soil retains water and anchors vegetation; vegetation protects soil from erosion and cycles nutrients; water sustains both." },
+                    { term: "Livelihoods", text: "The capabilities, assets, and activities required for a means of living. Human livelihoods are entirely dependent on the health of the surrounding natural resource base." }
+                  ]
+                },
+                {
+                  title: "2. Ecosystem Services: What Nature Provides for Us",
+                  intro: "Ecosystems sustain human life by providing a wide range of benefits known as ecosystem services. These are typically categorized into four types:",
+                  groups: [
+                    {
+                      title: "Provisioning Services",
+                      text: "The material benefits people obtain from ecosystems, such as:",
+                      items: ["Food, crops, and livestock forage", "Freshwater for drinking and irrigation", "Timber, firewood, and fiber", "Medicinal plants"]
+                    },
+                    {
+                      title: "Regulating Services",
+                      text: "The benefits obtained from the regulation of ecosystem processes, including:",
+                      items: ["Climate regulation and carbon sequestration", "Flood and erosion control via vegetation cover", "Water purification and natural filtration", "Pollination of crops by insects and birds"]
+                    },
+                    {
+                      title: "Supporting Services",
+                      text: "The fundamental underlying processes necessary for the production of all other ecosystem services, such as:",
+                      items: ["Soil formation and nutrient cycling", "Primary production (photosynthesis)"]
+                    },
+                    {
+                      title: "Cultural and Social Services",
+                      text: "Non-material benefits that enrich human life, including:",
+                      items: ["Spiritual and religious connections to the land", "Recreational, aesthetic, and tourism value", "Traditional ecological knowledge and heritage"]
+                    }
+                  ]
+                },
+                {
+                  title: "3. Recognizing Degradation: Symptoms of an Unhealthy Landscape",
+                  intro: "Landscape degradation occurs when the productivity, biodiversity, and ecological integrity of an ecosystem decline. Learning to read the landscape helps us diagnose these issues early:",
+                  terms: [
+                    { term: "Soil Erosion and Gullies", text: "The washing or blowing away of topsoil by wind and water, often cutting deep trenches (gullies) across sloping lands." },
+                    { term: "Vegetation Loss and Overgrazing", text: "A reduction in plant cover caused by excessive livestock pressure or clearing, leaving bare soil exposed to the elements." },
+                    { term: "Soil Crusting and Compaction", text: "Hardening of the soil surface due to heavy machinery, trampling, or rain impact, which prevents water infiltration and seed germination." },
+                    { term: "Invasive Species", text: "Aggressive non-native plants or animals that outcompete local species, often reducing the productive value of the land." },
+                    { term: "Declining Groundwater", text: "Lowering water tables, drying up of springs, and reduced baseflows in streams due to over-extraction and poor rainwater infiltration." }
+                  ]
+                }
+              ],
+              quiz: {
+                title: "4. Knowledge Check: Module 1 Multiple-Choice Quiz",
+                intro: "Test your understanding of the concepts covered in this module by answering the following questions:",
+                questions: [
+                  {
+                    q: "Which of the following best defines a watershed?",
+                    options: [
+                      "A standalone pond used exclusively for agricultural irrigation.",
+                      "The topographic area of land where all precipitation drains to a common outlet like a river or lake.",
+                      "An artificial channel built to redirect floodwaters away from towns.",
+                      "The underground layer of rock that holds groundwater."
+                    ],
+                    answer: 1
+                  },
+                  {
+                    q: "Water purification, flood control, and climate regulation are examples of which category of ecosystem services?",
+                    options: [
+                      "Provisioning services",
+                      "Supporting services",
+                      "Regulating services",
+                      "Cultural services"
+                    ],
+                    answer: 2
+                  },
+                  {
+                    q: "What is a primary cause of soil crusting and compaction in a landscape?",
+                    options: [
+                      "High biodiversity and dense tree cover",
+                      "Heavy machinery, excessive animal trampling, or intense rain impact on bare soil",
+                      "Rapid accumulation of organic mulch and compost",
+                      "Natural nutrient cycling and earthworm activity"
+                    ],
+                    answer: 1
+                  }
+                ]
+              },
+              exercise: {
+                title: "5. Interactive Exercise: Landscape Timeline",
+                intro: "Take a few moments to think about a specific landscape, farm, or natural area you have known well over the past 10 to 20 years.",
+                promptsTitle: "Reflection Prompts",
+                prompts: [
+                  { label: "The Past", text: "What did this landscape look like 10–20 years ago? What kinds of plants, animals, and water sources were abundant?" },
+                  { label: "The Changes", text: "What visible changes have occurred over time? (e.g., Have streams dried up? Are crops failing more often? Has woody brush or invasive weed cover increased?)" },
+                  { label: "The Drivers", text: "Do you think these changes were driven primarily by human activities (like overgrazing, deforestation, or urban expansion), climate shifts (like prolonged droughts), or a combination of both?" }
+                ],
+                closing: "Jot down your observations in your course notebook or share them in the discussion forum to compare notes with fellow learners!"
+              }
+            }
           },
           {
             n: 2,

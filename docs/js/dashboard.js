@@ -167,6 +167,11 @@ document.addEventListener('DOMContentLoaded', function () {
     // Registered learners go straight into the course; everyone else sees the course page.
     const cardUrl = enrolled && hasRoom ? openUrl : url;
 
+    const percent = enrolled && hasRoom && window.CourseModel ? CourseModel.state(course, course.slug).percent : null;
+    const progressBar = percent === null
+      ? ''
+      : '<div class="browse-progress" title="' + percent + '% complete"><div class="lx-bar"><span style="width:' + percent + '%"></span></div><span>' + percent + '% complete</span></div>';
+
     const actions = enrolled
       ? '<span class="browse-enrolled">Enrolled</span><a class="course-view-link" href="' + openUrl + '">' + openLabel + '</a>'
       : me
@@ -193,6 +198,7 @@ document.addEventListener('DOMContentLoaded', function () {
           (enrolled ? '<span class="browse-pill green">Enrolled</span>' : '') +
         '</div>' +
         materials +
+        progressBar +
         '<div class="browse-card-actions">' + actions + '</div>' +
       '</article>'
     );

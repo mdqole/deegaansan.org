@@ -53,14 +53,21 @@
                  image: { src, alt, caption },
                  terms: [{ term, text }] and/or groups: [{ title,
                  text, items: [] }] }], quiz: { title, intro,
-                 questions: [{ q, options: [], answer }] } (answer =
-                 0-based index of the right option), exercise: {
-                 title, intro, promptsTitle, prompts: [{ label,
-                 text }], closing } }. Modules with a lesson open
-                 automatically in the Course Room. Note the quiz
-                 answers are visible to anyone who views the page
-                 source, so use these for self-check practice, not
-                 for marks.
+                 pointsPerQuestion (default 0.5), passMark (default
+                 = the course passMark), questions: [{ q, options:
+                 [], answer }] } (answer = 0-based index of the
+                 right option), exercise: { title, intro,
+                 promptsTitle, prompts: [{ label, text }], closing } }.
+                 The Course Room turns each lesson section, quiz and
+                 exercise into a unit and opens them strictly in
+                 order: a quiz must be passed, the exercise needs a
+                 few notes, and later weeks stay hidden until the
+                 earlier ones are complete. A module with no lesson
+                 yet shows "content coming soon" and holds back the
+                 units after it. Quiz answers are never shown to
+                 learners, but they ARE in this file, so anyone who
+                 views the page source can read them — enforcing
+                 marks needs server-side grading.
    welcome     — the "Welcome to the course" message shown as the
                  first step of the Course Room. Paragraphs are
                  separated by a blank line.
@@ -255,6 +262,7 @@ The Course Team`,
               ],
               quiz: {
                 title: "4. Knowledge Check: Module 1 Multiple-Choice Quiz",
+                pointsPerQuestion: 0.5,
                 intro: "Test your understanding of the concepts covered in this module by answering the following questions:",
                 questions: [
                   {

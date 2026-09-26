@@ -7,7 +7,7 @@
   <title>Course Room – Deegansan</title>
 
   <link
-    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Lato:wght@300;400;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Lato:wght@300;400;700&family=Inter:wght@400;500;600;700&display=swap"
     rel="stylesheet"
   />
   <link rel="stylesheet" href="css/styles.css" />
@@ -33,8 +33,8 @@
     </ul>
   </nav>
 
-  <main class="room-page">
-    <div class="room-inner">
+  <main class="lx-page">
+    <div class="lx-shell">
       <a class="back-link" href="dashboard.html">← All courses</a>
 
       <div id="roomMessage" class="course-not-found" hidden>
@@ -47,15 +47,36 @@
       </div>
 
       <div id="roomContent" hidden>
-        <span class="section-tag">Course Room</span>
-        <h1 id="roomTitle"></h1>
-        <p class="enrolled-banner" id="roomStatus"></p>
+        <header class="lx-header">
+          <p class="lx-kicker">Deegansan · Course Room</p>
+          <h1 id="roomTitle"></h1>
+          <p class="lx-status" id="roomStatus"></p>
 
-        <nav class="room-steps" id="roomSteps" aria-label="Course outline"></nav>
+          <div class="lx-progressline" aria-live="polite">
+            <div class="lx-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" id="lxBar"><span id="lxBarFill"></span></div>
+            <strong id="lxPercent">0%</strong>
+            <span id="lxPercentNote">complete</span>
+          </div>
 
-        <div id="roomStepBody"></div>
+          <div class="lx-tabs" id="lxTabs" role="navigation" aria-label="Course sections"></div>
+        </header>
 
-        <div class="room-nav" id="roomNav"></div>
+        <div class="lx-course" id="lxCourse">
+          <button type="button" class="lx-outline-toggle" id="lxOutlineToggle" aria-expanded="false" aria-controls="lxOutline">Course outline</button>
+          <aside class="lx-outline" id="lxOutline" aria-label="Course outline"></aside>
+
+          <section class="lx-pane">
+            <div class="lx-pane-top">
+              <p class="lx-unit-kicker" id="lxUnitKicker"></p>
+              <div class="lx-arrows" id="lxArrows"></div>
+            </div>
+            <h2 class="lx-unit-title" id="lxUnitTitle"></h2>
+            <div id="roomStepBody"></div>
+            <div class="lx-nav" id="roomNav"></div>
+          </section>
+        </div>
+
+        <section class="lx-tabpage" id="lxTabPage" hidden></section>
       </div>
     </div>
   </main>
@@ -69,6 +90,7 @@
 
   <script src="js/courses-data.js"></script>
   <script src="js/registration.js"></script>
+  <script src="js/course-model.js"></script>
   <script src="js/main.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/learn.js"></script>

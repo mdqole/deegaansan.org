@@ -52,10 +52,11 @@
                  first step of the Course Room. Paragraphs are
                  separated by a blank line.
    preSurvey   — { title, intro, url }: the pre-course survey shown
-                 under the welcome message. Paste the Microsoft
-                 Forms link into url (leave "" until you have it);
-                 the form's own Previous / Next buttons work for
-                 its pages inside the embed.
+                 under the welcome message. Paste a Google Forms or
+                 Microsoft Forms link into url (leave "" for a
+                 placeholder). The form must be set to accept
+                 responses from anyone. Its own Previous / Next
+                 buttons work for its pages inside the embed.
    assessment  — array of { label, weight } (weights add up to 100)
    passMark    — pass percentage, e.g. 70
    certificate — text describing the completion certificate
@@ -120,7 +121,7 @@ The Course Team`,
     preSurvey: {
       title: "Pre-course survey",
       intro: "Please take a few minutes to complete this short survey before the course starts. It helps us understand your role, your experience and the landscape you work in.",
-      url: ""
+      url: "https://docs.google.com/forms/d/e/1FAIpQLScNGc6rCLRyAeG5P0OOkFxO7aiLVg0wbv6KrDwG2E93E_r9VQ/viewform?usp=publish-editor"
     },
     audience: [
       "Project officers",

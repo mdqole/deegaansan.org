@@ -91,6 +91,8 @@ document.addEventListener('DOMContentLoaded', function () {
       const url = new URL(u);
       if (/(^|\.)forms\.(office|microsoft)\.com$|(^|\.)forms\.cloud\.microsoft$/.test(url.hostname) && !url.searchParams.has('embed')) {
         url.searchParams.set('embed', 'true');
+      } else if (url.hostname === 'docs.google.com' && url.pathname.indexOf('/forms/') === 0 && !url.searchParams.has('embedded')) {
+        url.searchParams.set('embedded', 'true');
       }
       return url.toString();
     } catch (e) {

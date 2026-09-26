@@ -50,6 +50,7 @@
                  shows a "coming soon" placeholder in the room.
                  A module may also carry a full reading lesson:
                  lesson: { intro, sections: [{ title, intro,
+                 image: { src, alt, caption },
                  terms: [{ term, text }] and/or groups: [{ title,
                  text, items: [] }] }], quiz: { title, intro,
                  questions: [{ q, options: [], answer }] } (answer =
@@ -200,6 +201,11 @@ The Course Team`,
                 {
                   title: "1. Core Concepts: The Building Blocks of Landscapes",
                   intro: "To restore a landscape, we first need to understand how its components interact. A landscape is not just a collection of plants and animals; it is a dynamic, interconnected network of natural systems.",
+                  image: {
+                    src: "images/module-1-ecosystems.jpg",
+                    alt: "Illustration of a circular landscape divided into different ecosystems — tropical forest, savanna, conifer forest, woodland wetland, grassland, desert, rocky mountain, tundra and polar ice — each with its own plants and animals.",
+                    caption: "A landscape is a mosaic of ecosystems, each with its own plants, animals, soil and water."
+                  },
                   terms: [
                     { term: "Ecosystems", text: "A community of living organisms (plants, animals, and microbes) interacting with each other and their non-living physical environment (soil, water, air)." },
                     { term: "Landscapes", text: "A broader geographic area made up of a mosaic of interacting ecosystems, shaped by both natural processes and human activities." },

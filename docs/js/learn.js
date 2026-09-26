@@ -195,8 +195,12 @@ document.addEventListener('DOMContentLoaded', function () {
           '</li>';
         }).join('') + '</ol>'
       : '';
+    const image = s.image && s.image.src
+      ? '<figure class="lesson-figure"><img src="' + escapeHtml(s.image.src) + '" alt="' + escapeHtml(s.image.alt || '') + '" loading="lazy">' +
+        (s.image.caption ? '<figcaption>' + escapeHtml(s.image.caption) + '</figcaption>' : '') + '</figure>'
+      : '';
     return '<div class="lesson-section"><h3>' + escapeHtml(s.title) + '</h3>' +
-      (s.intro ? '<p>' + escapeHtml(s.intro) + '</p>' : '') + terms + groups + '</div>';
+      (s.intro ? '<p>' + escapeHtml(s.intro) + '</p>' : '') + image + terms + groups + '</div>';
   }
 
   function lessonQuizHtml(m) {

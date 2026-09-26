@@ -410,6 +410,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!response.ok || !data.ok) {
               throw new Error(data && data.error ? data.error : 'Submission failed');
             }
+            if (window.DeegansanReg) DeegansanReg.markRegistered(slug);
             if (!data.alreadyEnrolled) notifyFormspree(matchedCourse ? matchedCourse.title : slug, name, email);
             if (matchedCourse) {
               window.location.href = 'course.html?course=' + encodeURIComponent(matchedCourse.slug) + '&enrolled=1';

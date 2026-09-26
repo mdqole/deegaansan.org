@@ -1,17 +1,22 @@
 /* ============================================
    DEEGANSAN — learn.js
-   The Course Room (learn.html?course=<slug>): for
-   an enrolled student, one card per week with
-   modules, live sessions, recorded lessons,
-   materials, the weekly quiz and assignments.
-   Anything not filled in yet in courses-data.js
-   shows a "coming soon" placeholder.
+   The Course Room (learn.html?course=<slug>): a
+   step-by-step view for a registered learner —
+   "Welcome to the course" (welcome message + the
+   pre-course survey), then one step per week — with
+   Previous / Next buttons at the bottom. The last
+   step opened is remembered so "Pick up where you
+   left off" can return to it.
 
-   NOTE: the room is gated by login + enrollment,
-   but the content itself is static data shipped
-   with the site — don't put anything in it that
-   must stay private until real server-side
-   content delivery is added.
+   The room is soft-gated: it opens for anyone who
+   registered for the course on this device, or on
+   their account if logged in. Anyone else is asked
+   to register first (or to confirm they already
+   have, e.g. from another device).
+
+   NOTE: the content is static data shipped with the
+   site — don't put anything in it that must stay
+   private until real server-side delivery exists.
    ============================================ */
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -24,16 +29,31 @@ document.addEventListener('DOMContentLoaded', function () {
       .replace(/"/g, '&quot;');
   }
 
+  function textToHtml(text) {
+    return String(text || '')
+      .split(/\n\s*\n/)
+      .map(function (block) { return block.trim(); })
+      .filter(Boolean)
+      .map(function (block) { return '<p>' + escapeHtml(block).replace(/\n/g, '<br>') + '</p>'; })
+      .join('');
+  }
+
   const messageEl = document.getElementById('roomMessage');
   const contentEl = document.getElementById('roomContent');
   if (!contentEl) return;
 
-  function showMessage(title, text, linkHref, linkLabel) {
+  function showMessage(title, text, linkHref, linkLabel, alt) {
     document.getElementById('roomMessageTitle').textContent = title;
     document.getElementById('roomMessageText').textContent = text;
     const link = document.getElementById('roomMessageLink');
     link.href = linkHref;
     link.textContent = linkLabel;
+
+    const altBtn = document.getElementById('roomMessageAlt');
+    altBtn.hidden = !alt;
+    altBtn.onclick = alt ? alt.onClick : null;
+    if (alt) altBtn.textContent = alt.label;
+
     messageEl.hidden = false;
     contentEl.hidden = true;
   }
@@ -49,6 +69,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
   document.title = course.title + ' – Course Room';
 
+  /* ---------- steps ---------- */
+
   function statusText() {
     if (!course.startDate) return '';
     const start = new Date(course.startDate + 'T00:00:00+03:00');
@@ -62,6 +84,43 @@ document.addEventListener('DOMContentLoaded', function () {
       return 'The course starts on ' + dateLabel + ' — ' + togo + '. Live session links and materials will appear here before then.';
     }
     return 'The course started on ' + dateLabel + '.';
+  }
+
+  function embedUrl(u) {
+    try {
+      const url = new URL(u);
+      if (/(^|\.)forms\.(office|microsoft)\.com$|(^|\.)forms\.cloud\.microsoft$/.test(url.hostname) && !url.searchParams.has('embed')) {
+        url.searchParams.set('embed', 'true');
+      }
+      return url.toString();
+    } catch (e) {
+      return u;
+    }
+  }
+
+  function surveyHtml() {
+    const s = course.preSurvey;
+    if (!s) return '';
+    const body = s.url
+      ? '<iframe class="room-survey-frame" src="' + escapeHtml(embedUrl(s.url)) + '" title="' + escapeHtml(s.title || 'Pre-course survey') + '" loading="lazy" allowfullscreen></iframe>' +
+        '<p class="room-soon">Trouble seeing the form? <a class="course-view-link" href="' + escapeHtml(s.url) + '" target="_blank" rel="noopener">Open the survey in a new tab →</a></p>'
+      : '<div class="room-survey-placeholder">The pre-course survey will appear here soon.</div>';
+    return '<section class="room-survey">' +
+      '<h2>' + escapeHtml(s.title || 'Pre-course survey') + '</h2>' +
+      (s.intro ? '<p>' + escapeHtml(s.intro) + '</p>' : '') +
+      body +
+    '</section>';
+  }
+
+  function assessmentHtml() {
+    if (!course.assessment || !course.assessment.length) return '';
+    return '<section class="course-section"><h3>How You\'re Assessed</h3><table class="assess-table"><tbody>' +
+      course.assessment.map(function (a) {
+        return '<tr><td>' + escapeHtml(a.label) + '</td><td>' + a.weight + '%</td></tr>';
+      }).join('') + '</tbody></table>' +
+      (course.passMark ? '<p>Recommended passing score: <strong>' + course.passMark + '%</strong>.</p>' : '') +
+      (course.certificate ? '<p>' + escapeHtml(course.certificate) + '</p>' : '') +
+    '</section>';
   }
 
   function sessionsHtml(week) {
@@ -134,55 +193,120 @@ document.addEventListener('DOMContentLoaded', function () {
     );
   }
 
-  function render() {
+  const steps = [];
+  if (course.welcome || course.preSurvey) {
+    steps.push({
+      id: 'welcome',
+      label: 'Welcome',
+      title: 'Welcome to the course',
+      html: function () {
+        return '<section class="room-welcome"><h2>Welcome to the course</h2>' +
+          '<div class="room-welcome-msg">' + textToHtml(course.welcome) + '</div></section>' +
+          surveyHtml() + assessmentHtml();
+      }
+    });
+  }
+  course.weeks.forEach(function (w) {
+    steps.push({ id: 'week-' + w.week, label: 'Week ' + w.week, title: 'Week ' + w.week + ' — ' + w.title, html: function () { return weekHtml(w); } });
+  });
+
+  function stepIndex(id) {
+    for (let i = 0; i < steps.length; i++) if (steps[i].id === id) return i;
+    return -1;
+  }
+
+  function currentStepId() {
+    const fromHash = decodeURIComponent(window.location.hash.replace(/^#/, ''));
+    if (stepIndex(fromHash) !== -1) return fromHash;
+    const saved = DeegansanReg.getProgress(slug);
+    if (saved && stepIndex(saved.step) !== -1) return saved.step;
+    return steps[0].id;
+  }
+
+  function renderStep() {
+    const id = currentStepId();
+    const i = stepIndex(id);
+    const visited = (DeegansanReg.getProgress(slug) || { visited: [] }).visited;
+
+    document.getElementById('roomSteps').innerHTML = steps.map(function (s) {
+      const cls = 'room-step' + (s.id === id ? ' active' : '') + (visited.indexOf(s.id) !== -1 && s.id !== id ? ' done' : '');
+      return '<a class="' + cls + '" href="#' + s.id + '"' + (s.id === id ? ' aria-current="step"' : '') + '>' + escapeHtml(s.label) + '</a>';
+    }).join('');
+
+    document.getElementById('roomStepBody').innerHTML = steps[i].html();
+
+    const prev = steps[i - 1];
+    const next = steps[i + 1];
+    document.getElementById('roomNav').innerHTML =
+      (prev
+        ? '<a class="room-nav-btn prev" href="#' + prev.id + '"><span class="room-nav-dir">← Previous</span><span class="room-nav-title">' + escapeHtml(prev.label) + '</span></a>'
+        : '<span class="room-nav-btn prev disabled"><span class="room-nav-dir">← Previous</span><span class="room-nav-title">You\'re at the start</span></span>') +
+      (next
+        ? '<a class="room-nav-btn next" href="#' + next.id + '"><span class="room-nav-dir">Next →</span><span class="room-nav-title">' + escapeHtml(next.label) + '</span></a>'
+        : '<span class="room-nav-btn next disabled"><span class="room-nav-dir">Next →</span><span class="room-nav-title">End of the course outline</span></span>');
+
+    DeegansanReg.saveProgress(slug, id);
+  }
+
+  function openRoom() {
     document.getElementById('roomTitle').textContent = course.title;
     const status = statusText();
     const statusEl = document.getElementById('roomStatus');
     statusEl.textContent = status;
     statusEl.hidden = !status;
 
-    document.getElementById('roomWeeks').innerHTML = course.weeks.map(weekHtml).join('');
-
-    const assessmentEl = document.getElementById('roomAssessment');
-    if (course.assessment && course.assessment.length) {
-      assessmentEl.innerHTML = '<h3>How You\'re Assessed</h3><table class="assess-table"><tbody>' +
-        course.assessment.map(function (a) {
-          return '<tr><td>' + escapeHtml(a.label) + '</td><td>' + a.weight + '%</td></tr>';
-        }).join('') + '</tbody></table>' +
-        (course.passMark ? '<p>Recommended passing score: <strong>' + course.passMark + '%</strong>.</p>' : '') +
-        (course.certificate ? '<p>' + escapeHtml(course.certificate) + '</p>' : '');
-    } else {
-      assessmentEl.hidden = true;
-    }
-
     messageEl.hidden = true;
     contentEl.hidden = false;
+    renderStep();
   }
 
-  const returnTo = 'learn.html?course=' + encodeURIComponent(slug);
+  window.addEventListener('hashchange', function () {
+    if (contentEl.hidden) return;
+    renderStep();
+    window.scrollTo({ top: contentEl.getBoundingClientRect().top + window.scrollY - 90, behavior: 'smooth' });
+  });
 
-  fetch('/api/auth/me', { credentials: 'include' })
-    .then(function (r) { return r.json(); })
-    .then(function (me) {
-      if (!me.loggedIn) {
-        window.location.href = 'login.html?next=' + encodeURIComponent(returnTo);
-        return;
-      }
-      return fetch('/api/my-enrollments', { credentials: 'include' })
-        .then(function (r) { return r.json(); })
-        .then(function (result) {
-          const enrolled = result.ok && (result.enrollments || []).some(function (enr) {
-            return enr.courseSlug === slug;
+  /* ---------- who may open the room ---------- */
+
+  // Registered on this device, or (if logged in) on their account.
+  function accountEnrollment() {
+    return fetch('/api/auth/me', { credentials: 'include' })
+      .then(function (r) { return r.json(); })
+      .then(function (me) {
+        if (!me.loggedIn) return false;
+        return fetch('/api/my-enrollments', { credentials: 'include' })
+          .then(function (r) { return r.json(); })
+          .then(function (result) {
+            return result.ok && (result.enrollments || []).some(function (enr) { return enr.courseSlug === slug; });
           });
-          if (!enrolled) {
-            showMessage('You\'re Not Enrolled Yet', 'Enroll in this course to open its course room.', 'course.html?course=' + encodeURIComponent(slug), 'View the Course →');
-            return;
-          }
-          render();
-        });
-    })
-    .catch(function () {
-      showMessage('Something Went Wrong', 'We couldn\'t load the course room. Please try again in a moment.', 'dashboard.html', 'Back to Courses →');
-    });
+      })
+      .catch(function () { return false; });
+  }
+
+  if (DeegansanReg.isRegistered(slug)) {
+    openRoom();
+    return;
+  }
+
+  accountEnrollment().then(function (enrolled) {
+    if (enrolled) {
+      DeegansanReg.markRegistered(slug);
+      openRoom();
+      return;
+    }
+    showMessage(
+      'Register to Open the Course Room',
+      'We don\'t have a registration for this course on this device yet. Register to get started — or, if you already registered from another device, you can continue anyway.',
+      'course.html?course=' + encodeURIComponent(slug) + '#courseEnrollPanel',
+      'Register for the Course →',
+      {
+        label: 'I\'ve already registered — continue',
+        onClick: function () {
+          DeegansanReg.markRegistered(slug);
+          openRoom();
+        }
+      }
+    );
+  });
 
 });

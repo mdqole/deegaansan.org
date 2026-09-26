@@ -46,6 +46,10 @@ document.addEventListener('DOMContentLoaded', function () {
   let me = null;
   const enrolledAt = {}; // courseSlug -> ISO date string
 
+  // Courses registered for on this device count too (works without login).
+  const localReg = window.DeegansanReg ? DeegansanReg.registeredSlugs() : {};
+  Object.keys(localReg).forEach(function (s) { enrolledAt[s] = localReg[s]; });
+
   function isEnrolled(course) {
     return Object.prototype.hasOwnProperty.call(enrolledAt, course.slug);
   }
@@ -154,10 +158,14 @@ document.addEventListener('DOMContentLoaded', function () {
         }).join('') + '</ul>'
       : '';
 
-    const openUrl = course.weeks && course.weeks.length
-      ? 'learn.html?course=' + encodeURIComponent(course.slug)
+    const hasRoom = course.weeks && course.weeks.length;
+    const progress = window.DeegansanReg ? DeegansanReg.getProgress(course.slug) : null;
+    const openUrl = hasRoom
+      ? 'learn.html?course=' + encodeURIComponent(course.slug) + (progress ? '#' + progress.step : '#welcome')
       : url;
-    const openLabel = course.weeks && course.weeks.length ? 'Open Course Room →' : 'Open course →';
+    const openLabel = hasRoom ? (progress ? 'Pick up where you left off →' : 'Start the course →') : 'Open course →';
+    // Registered learners go straight into the course; everyone else sees the course page.
+    const cardUrl = enrolled && hasRoom ? openUrl : url;
 
     const actions = enrolled
       ? '<span class="browse-enrolled">Enrolled</span><a class="course-view-link" href="' + openUrl + '">' + openLabel + '</a>'
@@ -171,11 +179,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     return (
       '<article class="browse-card">' +
-        '<a class="browse-card-img" href="' + url + '"' + image + ' aria-label="' + escapeHtml(course.title) + '">' +
+        '<a class="browse-card-img" href="' + cardUrl + '"' + image + ' aria-label="' + escapeHtml(course.title) + '">' +
           (enrolled ? '<span class="browse-badge" title="Enrolled">✓</span>' : '') +
         '</a>' +
         '<div class="browse-card-by"><span class="browse-card-avatar">D</span><span>Deegansan</span></div>' +
-        '<a class="browse-card-title" href="' + url + '">' + escapeHtml(course.title) + '</a>' +
+        '<a class="browse-card-title" href="' + cardUrl + '">' + escapeHtml(course.title) + '</a>' +
         skills +
         '<div class="browse-card-pills">' +
           '<span class="browse-pill">' + escapeHtml(course.format) + '</span>' +
@@ -336,6 +344,7 @@ document.addEventListener('DOMContentLoaded', function () {
           if (!r.ok || !data.ok) throw new Error(data && data.error ? data.error : 'Enrollment failed.');
           if (!data.alreadyEnrolled) notifyFormspree(course);
           enrolledAt[course.slug] = new Date().toISOString();
+          if (window.DeegansanReg) DeegansanReg.markRegistered(course.slug);
           setStatus('You\'re enrolled in ' + course.title + '.', 'success');
           render();
         });

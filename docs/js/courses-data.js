@@ -48,6 +48,14 @@
                  link }, videos: [{ label, link }] and
                  materials: [{ label, file }] — anything left out
                  shows a "coming soon" placeholder in the room.
+   welcome     — the "Welcome to the course" message shown as the
+                 first step of the Course Room. Paragraphs are
+                 separated by a blank line.
+   preSurvey   — { title, intro, url }: the pre-course survey shown
+                 under the welcome message. Paste the Microsoft
+                 Forms link into url (leave "" until you have it);
+                 the form's own Previous / Next buttons work for
+                 its pages inside the embed.
    assessment  — array of { label, weight } (weights add up to 100)
    passMark    — pass percentage, e.g. 70
    certificate — text describing the completion certificate
@@ -95,6 +103,25 @@ Participants learn how land, vegetation, soil and water function as one intercon
 The course places particular emphasis on dryland environments similar to Somalia, where drought, irregular rainfall, flash floods, erosion, vegetation loss, land degradation and competition over natural resources frequently occur together.
 
 Healthy landscapes capture rainfall. Healthy soils absorb water. Healthy vegetation protects soils. Healthy catchments regulate water. The aim is not simply to construct structures or plant trees — it is to restore the function of the landscape so that water is slowed, spreads safely and infiltrates, soil stays in place, vegetation regenerates, and communities are better prepared for droughts and floods.`,
+    welcome: `Dear learner,
+
+Welcome to the course! We are delighted to offer Ecosystem Restoration and Integrated Water Resources Management: Restoring Landscapes, Managing Water and Building Climate Resilience. The course runs over six weeks and involves approximately 24–30 learning hours.
+
+This 16-module online course provides a practical introduction to how land, soil, vegetation and water function as one interconnected system, and how restoring that system can help communities cope with drought, flash floods, erosion and land degradation. You will explore interventions such as half-moons, contour bunds, bioswales, check dams, gully rehabilitation, Farmer Managed Natural Regeneration (FMNR), rangeland restoration and rainwater harvesting, with a particular focus on dryland, agricultural, pastoral and displacement-affected landscapes similar to those in Somalia. The guiding idea is simple: to slow, spread, store and safely use water across the landscape.
+
+Each week includes two live online sessions, short recorded lessons, practical field and photo-based exercises, a weekly quiz and group assignments. Throughout the course you will work towards a final practical project: a Community Ecosystem Restoration and IWRM Plan for a real landscape that you know.
+
+Before getting started, please introduce yourself to your fellow participants through the course WhatsApp group or learning platform, and tell us a little about your role and the landscape you work in. We encourage you to ask questions, share photos from the field and learn from each other's experience – much of the most valuable knowledge in this course will come from participants themselves.
+
+As a reminder, all of the logistical information about the course, including the session schedule, learning materials, assessment weighting and certificate requirements, can be found on the course platform. Participants who complete the course and its assignments with a score of 70% or above will receive a Certificate of Completion. Enjoy the course, and please be sure to share your feedback and suggestions along the way!
+
+Best regards,
+The Course Team`,
+    preSurvey: {
+      title: "Pre-course survey",
+      intro: "Please take a few minutes to complete this short survey before the course starts. It helps us understand your role, your experience and the landscape you work in.",
+      url: ""
+    },
     audience: [
       "Project officers",
       "Field officers",

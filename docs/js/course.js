@@ -135,22 +135,33 @@ document.addEventListener('DOMContentLoaded', function () {
 
   /* -- Enrolled confirmation banner + hide the form once enrolled -- */
   const bannerEl = document.getElementById('courseEnrolledBanner');
-  const enrolledNameEl = document.getElementById('enrolledCourseName');
+  const enrolledMsgEl = document.getElementById('courseEnrolledMsg');
   const enrollPanelEl = document.getElementById('courseEnrollPanel');
 
   const roomLinkEl = document.getElementById('courseRoomLink');
 
-  function showEnrolled() {
-    if (enrolledNameEl) enrolledNameEl.textContent = course.title;
+  // justEnrolled = they've only just registered (vs. coming back later).
+  function showEnrolled(justEnrolled) {
+    DeegansanReg.markRegistered(course.slug);
+
+    if (enrolledMsgEl) {
+      enrolledMsgEl.innerHTML = justEnrolled
+        ? 'You\'re enrolled in <strong>' + escapeHtml(course.title) + '</strong> — we\'ll be in touch about dates, cost, and how to get started.'
+        : 'Welcome back — you\'re registered for <strong>' + escapeHtml(course.title) + '</strong>.';
+    }
     if (bannerEl) bannerEl.hidden = false;
     if (enrollPanelEl) enrollPanelEl.hidden = true;
+
     if (roomLinkEl && course.weeks && course.weeks.length) {
-      roomLinkEl.href = 'learn.html?course=' + encodeURIComponent(course.slug);
+      const progress = DeegansanReg.getProgress(course.slug);
+      roomLinkEl.textContent = progress ? 'Pick up where you left off →' : 'Start the course →';
+      roomLinkEl.href = 'learn.html?course=' + encodeURIComponent(course.slug) + (progress ? '#' + progress.step : '#welcome');
       roomLinkEl.hidden = false;
     }
   }
 
-  if (enrolled) showEnrolled();
+  if (enrolled) showEnrolled(true);
+  else if (DeegansanReg.isRegistered(course.slug)) showEnrolled(false);
 
   /* -- Full-course sections (only for courses that define them) -- */
   const extrasEl = document.getElementById('courseExtras');
@@ -231,7 +242,7 @@ document.addEventListener('DOMContentLoaded', function () {
               const already = result.ok && (result.enrollments || []).some(function (enr) {
                 return enr.courseSlug === course.slug;
               });
-              if (already) showEnrolled();
+              if (already) showEnrolled(false);
             })
             .catch(function () {});
         }
@@ -273,7 +284,7 @@ document.addEventListener('DOMContentLoaded', function () {
               throw new Error(data && data.error ? data.error : 'Submission failed');
             }
             if (!data.alreadyEnrolled) notifyFormspree(name, email);
-            showEnrolled();
+            showEnrolled(true);
           });
         })
         .catch(function (err) {

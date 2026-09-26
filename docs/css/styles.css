@@ -1703,6 +1703,7 @@ h2 {
 
 .browse-card-actions {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
@@ -1843,11 +1844,180 @@ h2 {
    (course.html extras and learn.html)
    ============================================ */
 
-.banner-link {
+.enrolled-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.resume-btn {
   display: inline-block;
-  margin-left: 0.5rem;
+  padding: 11px 26px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.room-message-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.room-steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1.5rem 0 0.5rem;
+}
+
+.room-step {
+  padding: 7px 16px;
+  border: 1.5px solid var(--green-mid);
+  border-radius: 30px;
+  background: var(--white);
+  font-size: 0.82rem;
   font-weight: 700;
+  color: var(--text-mid);
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.room-step:hover {
+  border-color: var(--green);
   color: var(--green);
+}
+
+.room-step.done::before {
+  content: "✓ ";
+  color: var(--green-light);
+}
+
+.room-step.active {
+  border-color: var(--green);
+  background: var(--green);
+  color: #fff;
+}
+
+.room-welcome,
+.room-survey {
+  margin-top: 1.75rem;
+  padding: 1.75rem;
+  border: 1px solid rgba(107, 58, 42, 0.15);
+  border-radius: 16px;
+  background: var(--white);
+}
+
+.room-welcome h2,
+.room-survey h2 {
+  margin-bottom: 1rem;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem;
+  color: var(--text-dark);
+}
+
+.room-welcome-msg p,
+.room-survey > p {
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: var(--text-mid);
+}
+
+.room-survey-frame {
+  width: 100%;
+  height: 820px;
+  margin-bottom: 0.75rem;
+  border: 1px solid rgba(107, 58, 42, 0.15);
+  border-radius: 12px;
+  background: var(--cream);
+}
+
+.room-survey-placeholder {
+  padding: 2.5rem 1.5rem;
+  border: 2px dashed var(--green-mid);
+  border-radius: 12px;
+  background: var(--green-pale);
+  text-align: center;
+  font-size: 0.92rem;
+  color: var(--green);
+}
+
+.room-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(107, 58, 42, 0.12);
+}
+
+.room-nav-btn {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  max-width: 48%;
+  padding: 12px 22px;
+  border: 1.5px solid var(--green);
+  border-radius: 12px;
+  background: var(--white);
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+}
+
+.room-nav-btn.next {
+  margin-left: auto;
+  align-items: flex-end;
+  background: var(--green);
+}
+
+.room-nav-dir {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--green);
+}
+
+.room-nav-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.82rem;
+  color: var(--text-mid);
+}
+
+.room-nav-btn.next .room-nav-dir,
+.room-nav-btn.next .room-nav-title {
+  color: #fff;
+}
+
+.room-nav-btn:not(.disabled):hover {
+  background: var(--green-pale);
+}
+
+.room-nav-btn.next:not(.disabled):hover {
+  background: var(--green-light);
+}
+
+.room-nav-btn.disabled {
+  border-color: rgba(107, 58, 42, 0.2);
+  background: transparent;
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.room-nav-btn.next.disabled .room-nav-dir,
+.room-nav-btn.next.disabled .room-nav-title {
+  color: var(--text-mid);
+}
+
+.room-nav-btn.next.disabled {
+  background: transparent;
 }
 
 .course-starts {
@@ -1876,6 +2046,7 @@ h2 {
 
 .course-section {
   margin-top: 2.5rem;
+  padding: 0; /* override the site-wide `section { padding: 5rem }` */
 }
 
 .course-section h3 {

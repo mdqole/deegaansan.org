@@ -161,8 +161,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const actions = enrolled
       ? '<span class="browse-enrolled">Enrolled</span><a class="course-view-link" href="' + openUrl + '">' + openLabel + '</a>'
-      : '<button type="button" class="course-enroll-btn" data-slug="' + escapeHtml(course.slug) + '">Enroll</button>' +
-        '<a class="course-view-link" href="' + url + '">Details →</a>';
+      : me
+        ? '<button type="button" class="course-enroll-btn" data-slug="' + escapeHtml(course.slug) + '">Enroll</button>' +
+          '<a class="course-view-link" href="' + url + '">Details →</a>'
+        // Not logged in: no account to link the enrollment to yet, so send
+        // them to the course page's own form (asks for name + email there).
+        : '<a class="course-enroll-btn" href="' + url + '#courseEnrollPanel">Enroll</a>' +
+          '<a class="course-view-link" href="' + url + '">Details →</a>';
 
     return (
       '<article class="browse-card">' +
@@ -347,11 +352,15 @@ document.addEventListener('DOMContentLoaded', function () {
   buildSuggestions();
   renderFilters();
 
+  // Login is optional here too: logged-in visitors see which courses
+  // they're already enrolled in and can enroll in one click; logged-out
+  // visitors can still browse everything, and enrolling just sends them to
+  // the course page's form (see cardHtml above).
   fetch('/api/auth/me', { credentials: 'include' })
     .then(function (r) { return r.json(); })
     .then(function (data) {
       if (!data.loggedIn) {
-        window.location.href = 'login.html?next=dashboard.html';
+        render();
         return;
       }
       me = data;
@@ -371,7 +380,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     })
     .catch(function () {
-      gridEl.innerHTML = '<p class="topics-empty">Something went wrong loading courses — please try again.</p>';
+      render();
     });
 
 });

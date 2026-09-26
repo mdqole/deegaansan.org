@@ -537,19 +537,15 @@
     <div class="enroll-panel" id="enroll">
       <div class="enroll-panel-head">
         <h3>Enroll in a Course</h3>
-        <p>Log in or create a free account, then choose which course you'd like to take — it'll show up on your own "My Courses" page.</p>
-      </div>
-
-      <div class="auth-prompt" id="enrollAuthPrompt" hidden>
-        <p>You'll need an account to enroll.</p>
-        <div class="auth-prompt-btns">
-          <a href="login.html?next=%23courses" class="course-enroll-btn">Log In</a>
-          <a href="signup.html?next=%23courses" class="btn-send" style="text-decoration:none;">Sign Up Free →</a>
-        </div>
+        <p>Tell us which course you'd like to take — it'll show up on your "My Courses" page if you're logged in.</p>
       </div>
 
       <form class="enroll-form" id="enrollForm">
         <p class="enroll-as" id="enrollAsLine" hidden></p>
+        <div class="form-row" id="enrollNameEmailRow">
+          <input type="text" name="name" placeholder="Your Name" />
+          <input type="email" name="email" placeholder="Email Address" />
+        </div>
         <div class="form-row">
           <input type="text" name="phone" placeholder="Phone (optional)" />
           <select name="course" id="enrollCourse" required>

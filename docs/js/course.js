@@ -190,29 +190,23 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
-  /* -- Auth gate + this page's own enrollment form -- */
+  /* -- This page's own enrollment form (login optional) -- */
   const form = document.getElementById('courseEnrollForm');
-  const authPrompt = document.getElementById('courseAuthPrompt');
+  const nameEmailRow = document.getElementById('courseEnrollNameEmail');
   const enrollAsLine = document.getElementById('courseEnrollAsLine');
-  const loginLink = document.getElementById('courseLoginLink');
-  const signupLink = document.getElementById('courseSignupLink');
-  const nextParam = encodeURIComponent('course.html?course=' + slug);
-
-  if (loginLink) loginLink.href = 'login.html?next=' + nextParam;
-  if (signupLink) signupLink.href = 'signup.html?next=' + nextParam;
 
   if (form && !enrolled) {
     const statusEl = document.getElementById('courseEnrollStatus');
     const btn = form.querySelector('.btn-send');
     let currentUser = null;
 
-    function notifyFormspree() {
+    function notifyFormspree(name, email) {
       fetch('https://formspree.io/f/mljdeapa', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify({
-          name: currentUser.name,
-          email: currentUser.email,
+          name: name,
+          email: email,
           course: course.title,
           _subject: 'New Course Enrollment: ' + course.title
         })
@@ -224,8 +218,7 @@ document.addEventListener('DOMContentLoaded', function () {
       .then(function (me) {
         if (me.loggedIn) {
           currentUser = me;
-          form.hidden = false;
-          if (authPrompt) authPrompt.hidden = true;
+          if (nameEmailRow) nameEmailRow.hidden = true;
           if (enrollAsLine) {
             enrollAsLine.hidden = false;
             enrollAsLine.textContent = 'Enrolling as ' + me.name + ' (' + me.email + ')';
@@ -241,17 +234,20 @@ document.addEventListener('DOMContentLoaded', function () {
               if (already) showEnrolled();
             })
             .catch(function () {});
-        } else {
-          form.hidden = true;
-          if (authPrompt) authPrompt.hidden = false;
         }
       });
 
     form.addEventListener('submit', function (e) {
       e.preventDefault();
 
-      if (!currentUser) {
-        if (authPrompt) authPrompt.hidden = false;
+      const name = currentUser ? currentUser.name : form.querySelector('[name="name"]').value.trim();
+      const email = currentUser ? currentUser.email : form.querySelector('[name="email"]').value.trim();
+
+      if (!currentUser && (!name || !email)) {
+        if (statusEl) {
+          statusEl.textContent = 'Please fill in your name and email.';
+          statusEl.className = 'form-status error';
+        }
         return;
       }
 
@@ -263,6 +259,8 @@ document.addEventListener('DOMContentLoaded', function () {
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          name: name,
+          email: email,
           phone: form.querySelector('[name="phone"]').value.trim(),
           course: course.title,
           courseSlug: course.slug,
@@ -274,7 +272,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!response.ok || !data.ok) {
               throw new Error(data && data.error ? data.error : 'Submission failed');
             }
-            if (!data.alreadyEnrolled) notifyFormspree();
+            if (!data.alreadyEnrolled) notifyFormspree(name, email);
             showEnrolled();
           });
         })

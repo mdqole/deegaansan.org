@@ -6,7 +6,13 @@ const requireAuth = require('../middleware/requireAuth');
 
 const router = express.Router();
 
-router.post('/enroll', requireAuth, async (req, res) => {
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+// Login is optional here: a logged-in visitor's enrollment is linked to
+// their account (and shows up on their dashboard); a logged-out visitor
+// can still enroll by giving their name and email, same as before accounts
+// existed — it's just not attached to anyone's "My Courses" list.
+router.post('/enroll', async (req, res) => {
   const body = req.body || {};
 
   const phone = String(body.phone || '').trim();
@@ -24,25 +30,38 @@ router.post('/enroll', requireAuth, async (req, res) => {
   }
 
   try {
-    const user = await User.findById(req.session.userId);
-    if (!user) {
-      return res.status(401).json({ ok: false, error: 'Please log in to continue.' });
+    let userId = null;
+    let name;
+    let email;
+
+    if (req.session && req.session.userId) {
+      const user = await User.findById(req.session.userId);
+      if (user) {
+        userId = user._id;
+        name = user.name;
+        email = user.email;
+      }
     }
 
-    const existing = await Enrollment.findOne({ userId: user._id, courseSlug });
-    if (existing) {
-      return res.json({ ok: true, alreadyEnrolled: true });
+    if (!userId) {
+      name = String(body.name || '').trim();
+      email = String(body.email || '').trim();
+      if (!name || !email) {
+        return res.status(400).json({ ok: false, error: 'Please fill in your name and email.' });
+      }
+      if (!EMAIL_RE.test(email)) {
+        return res.status(400).json({ ok: false, error: 'Please enter a valid email address.' });
+      }
     }
 
-    await Enrollment.create({
-      userId: user._id,
-      name: user.name,
-      email: user.email,
-      phone,
-      course,
-      courseSlug,
-      message
-    });
+    if (userId) {
+      const existing = await Enrollment.findOne({ userId, courseSlug });
+      if (existing) {
+        return res.json({ ok: true, alreadyEnrolled: true });
+      }
+    }
+
+    await Enrollment.create({ userId, name, email, phone, course, courseSlug, message });
     return res.json({ ok: true });
   } catch (err) {
     console.error('[enroll] Failed to save enrollment:', err.message);
